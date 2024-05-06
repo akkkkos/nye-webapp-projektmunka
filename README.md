@@ -1,6 +1,6 @@
 # Webshop React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).\
 It is for the [epam-nye-webapp-2024 exam](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/tree/main/exam-tasks).
 
 ## Available Scripts
