@@ -1,29 +1,48 @@
-import React, { FC } from 'react';
-import { Flex , Text, Card, CardBody} from '@chakra-ui/react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { Flex, Text, Card, CardBody, Image } from '@chakra-ui/react';
+import { useWebshopApi } from '../state/useWebshopApi';
+import { Category } from '../model/Category';
+import { useNavigate } from 'react-router-dom';
+
 
 export const KezdoLap: FC = () => {
+    const [categories, setCategories] = useState<Category[]>([])
+    const { getCategories } = useWebshopApi()
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        loadCategories();
+    }, [])
+
+    const loadCategories = async () => {
+        const _categories = await getCategories()
+        setCategories(_categories);
+    }
+
+    const handleCardClick = (categoryId: string) => {
+        navigate("/category/" + categoryId);
+    }
+
+
     return (
         <>
-            <Card margin="2">
-                <CardBody>
-                <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus, quam non pulvinar facilisis, lorem risus dignissim nisi, in aliquam metus justo feugiat magna. Praesent vestibulum ornare metus, non porta urna posuere sed. Cras nec orci eget mauris varius feugiat. Maecenas id enim at magna condimentum porta et sit amet mauris. Aenean a lacus porttitor, facilisis sem eget, rhoncus nisl. Nulla at elit in metus condimentum dictum. Praesent hendrerit sem eu ex luctus, efficitur vestibulum tortor aliquet. Aliquam viverra maximus orci, id elementum turpis. Nulla facilisi.</Text>
-                </CardBody>
-            </Card>
-            <Card margin="2">
-                <CardBody>
-                <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus, quam non pulvinar facilisis, lorem risus dignissim nisi, in aliquam metus justo feugiat magna. Praesent vestibulum ornare metus, non porta urna posuere sed. Cras nec orci eget mauris varius feugiat. Maecenas id enim at magna condimentum porta et sit amet mauris. Aenean a lacus porttitor, facilisis sem eget, rhoncus nisl. Nulla at elit in metus condimentum dictum. Praesent hendrerit sem eu ex luctus, efficitur vestibulum tortor aliquet. Aliquam viverra maximus orci, id elementum turpis. Nulla facilisi.</Text>
-                </CardBody>
-            </Card>
-            <Card margin="2">
-                <CardBody>
-                <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus, quam non pulvinar facilisis, lorem risus dignissim nisi, in aliquam metus justo feugiat magna. Praesent vestibulum ornare metus, non porta urna posuere sed. Cras nec orci eget mauris varius feugiat. Maecenas id enim at magna condimentum porta et sit amet mauris. Aenean a lacus porttitor, facilisis sem eget, rhoncus nisl. Nulla at elit in metus condimentum dictum. Praesent hendrerit sem eu ex luctus, efficitur vestibulum tortor aliquet. Aliquam viverra maximus orci, id elementum turpis. Nulla facilisi.</Text>
-                </CardBody>
-            </Card>
-            <Card margin="2">
-                <CardBody>
-                <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus, quam non pulvinar facilisis, lorem risus dignissim nisi, in aliquam metus justo feugiat magna. Praesent vestibulum ornare metus, non porta urna posuere sed. Cras nec orci eget mauris varius feugiat. Maecenas id enim at magna condimentum porta et sit amet mauris. Aenean a lacus porttitor, facilisis sem eget, rhoncus nisl. Nulla at elit in metus condimentum dictum. Praesent hendrerit sem eu ex luctus, efficitur vestibulum tortor aliquet. Aliquam viverra maximus orci, id elementum turpis. Nulla facilisi.</Text>
-                </CardBody>
-            </Card>
+            <Flex flexWrap="wrap" justifyContent="center">
+                {
+                    categories.map((category, index) =>
+                            <Card key={index} margin="2" minWidth={200} onClick={() => handleCardClick(category.id)} size="md" _hover={{ cursor: 'pointer' }}>
+                                <Image
+                                    objectFit='none'
+                                    maxW={{ base: '100%', sm: '200px' }}
+                                    src={category.image}
+                                />
+                                <CardBody>
+                                    <Text>{category.name}</Text>
+                                    <Text>{category.productCount} db</Text>
+                                </CardBody>
+                            </Card>
+                    )
+                }
+            </Flex>
         </>
     );
 }
