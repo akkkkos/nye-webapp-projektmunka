@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { User } from '../auth/authContext';
+import { Category } from '../model/Category';
 
 const BASE_URL = 'http://localhost:5000';
 
@@ -31,10 +32,23 @@ export const useWebshopApi = () => {
     []
   );
 
+  const getCategories = useCallback(async () => {
+    const response = await fetch(`${BASE_URL}/products/categories`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error('Hiba kategóriák lekérdezésénél');
+    }
+    var result: Category[] = await response.json();
+    return result;
+  }, []);
+
 
   return {
     login,
-    getUserProfile
+    getUserProfile,
+    getCategories
   };
 
 };
