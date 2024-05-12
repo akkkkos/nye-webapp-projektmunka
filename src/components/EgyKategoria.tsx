@@ -30,11 +30,27 @@ export const EgyKategoria: FC = () => {
         loadProducts()
     }, []);
 
+    useEffect(() => {
+        setSearchParams({ "orderBy": productsState.orderBy, "page": pageCount.toString() });
+    }, [productsState.orderBy, pageCount]);
+
     const loadProducts = async () => {
+        const pageCountParam = searchParams.get('page')
+        if (pageCountParam) {
+            setPageCount(Number.parseInt(pageCountParam))
+            const newOffset = (Number.parseInt(pageCountParam) - 1) * 6
+            productsDispatch({ type: 'changeOffset', payload: { offset: newOffset } })
+        }
+
+        const orderByParam = searchParams.get('orderBy')
+        if (orderByParam) {
+            productsDispatch({ type: 'changeOrder', payload: orderByParam as ProductSortType })
+        }
+
         const defaultQuery: ProductSearchParams = {
             limit: INITIAL_STATE.limit,
-            offset: INITIAL_STATE.offset,
-            orderBy: INITIAL_STATE.orderBy,
+            offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
+            orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy,
             categories: categoryId ? [categoryId] : []
         }
         const _productsData = await getProducts(defaultQuery);
