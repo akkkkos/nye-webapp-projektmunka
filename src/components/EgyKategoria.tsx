@@ -7,7 +7,6 @@ import { ProductsStateReducer, productsReducer } from '../state/productsReducer'
 import { useWebshopApi } from '../state/useWebshopApi';
 import { ProductSearchParams } from '../state/productsState';
 import { ProductListElement } from './products/ProductListElement';
-import { off } from 'process';
 
 export const INITIAL_STATE: ProductsState = {
     products: [],
@@ -36,7 +35,7 @@ export const EgyKategoria: FC = () => {
             limit: INITIAL_STATE.limit,
             offset: INITIAL_STATE.offset,
             orderBy: INITIAL_STATE.orderBy,
-            categories: categoryId? [categoryId]:[]
+            categories: categoryId ? [categoryId] : []
         }
         const _productsData = await getProducts(defaultQuery);
         console.log(_productsData);
@@ -63,28 +62,83 @@ export const EgyKategoria: FC = () => {
         reloadProducts(newOffset)
     }
 
-    const reloadProducts = async (offset: number) => {
+    const reloadProducts = async (offset: number, orderBy?: ProductSortType) => {
         const query: ProductSearchParams = {
             limit: INITIAL_STATE.limit,
             offset: offset,
-            orderBy: productsState.orderBy,
-            categories: categoryId? [categoryId]:[]
+            orderBy: orderBy ? orderBy : productsState.orderBy,
+            categories: categoryId ? [categoryId] : []
         }
         const _productsData = await getProducts(query);
         console.log(_productsData);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
+    const handleSortChange = (e: MouseEvent<HTMLButtonElement>) => {
+        const nameOfButton = e.currentTarget.name;
+        if (!nameOfButton) return;
 
+        var newOrderBy: ProductSortType = productsState.orderBy;
+        switch (nameOfButton) {
+            case "nameSortSwitch":
+                if (productsState.orderBy == ProductSortType.NAME_ASC) {
+                    productsDispatch({ type: 'changeOrder', payload: ProductSortType.NAME_DESC })
+                    newOrderBy = ProductSortType.NAME_DESC;
+                }
+                else {
+                    productsDispatch({ type: 'changeOrder', payload: ProductSortType.NAME_ASC })
+                    newOrderBy = ProductSortType.NAME_ASC;
+                }
+                break;
+            case "priceSortSwitch":
+                if (productsState.orderBy == ProductSortType.PRICE_ASC) {
+                    productsDispatch({ type: 'changeOrder', payload: ProductSortType.PRICE_DESC })
+                    newOrderBy = ProductSortType.PRICE_DESC;
+                }
+                else {
+                    productsDispatch({ type: 'changeOrder', payload: ProductSortType.PRICE_ASC })
+                    newOrderBy = ProductSortType.PRICE_ASC;
+                }
+                break;
+            case "ratingSortSwitch":
+                if (productsState.orderBy == ProductSortType.RATING_ASC) {
+                    productsDispatch({ type: 'changeOrder', payload: ProductSortType.RATING_DESC })
+                    newOrderBy = ProductSortType.RATING_DESC;
+                }
+                else {
+                    productsDispatch({ type: 'changeOrder', payload: ProductSortType.RATING_ASC })
+                    newOrderBy = ProductSortType.RATING_ASC;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        reloadProducts(productsState.offset, newOrderBy);
+    }
 
 
     return (
         <>
             <Text>Összes termék ebben a kategóriában: {productsState.total}db</Text>
-            <Text>Oldal: {pageCount}</Text>
 
-            <Button onClick={handleElozoOldal}>Előző</Button>
-            <Button onClick={handleKovetkezoOldal}>Következő</Button>
+            {
+                productsState.total > 6 &&
+                (
+                    <>
+                        <Text>Oldal: {pageCount}</Text>
+                        <Button onClick={handleElozoOldal}>Előző</Button>
+                        <Button onClick={handleKovetkezoOldal}>Következő</Button>
+                    </>
+                )
+            }
+
+            <Text>Sorba rendezés:</Text>
+            <Button onClick={handleSortChange} name='nameSortSwitch'>Név {productsState.orderBy == ProductSortType.NAME_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.NAME_DESC ? <Text>▼</Text> : <></>)}</Button>
+            <Button onClick={handleSortChange} name='priceSortSwitch'>Ár {productsState.orderBy == ProductSortType.PRICE_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.PRICE_DESC ? <Text>▼</Text> : <></>)}</Button>
+            <Button onClick={handleSortChange} name='ratingSortSwitch'>Értékelés {productsState.orderBy == ProductSortType.RATING_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.RATING_DESC ? <Text>▼</Text> : <></>)}</Button>
+
             <Flex flexWrap="wrap" justifyContent="center">
                 {
                     productsState.products.map((productData, index) =>
