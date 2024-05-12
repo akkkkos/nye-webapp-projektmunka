@@ -1,8 +1,18 @@
 import React, { FC } from 'react';
-import { Card, CardBody, Image, Text } from '@chakra-ui/react';
+import { Card, CardBody, Image, Text, Flex } from '@chakra-ui/react';
 import { Product } from '../../model';
+import { FaStar } from "react-icons/fa";
 
 export const ProductListElement: FC<Product> = (product) => {
+
+    const renderStars = () => {
+        const stars = [];
+        for (let i = 1; i <= product.rating; i++) {
+            stars.push(<FaStar />);
+        }
+        return stars;
+    };
+
     return (
         <Card margin="2" minWidth={200} size="md" _hover={{ cursor: 'pointer' }}>
             <Image
@@ -12,13 +22,13 @@ export const ProductListElement: FC<Product> = (product) => {
             />
             <CardBody>
                 <Text>{product.name}</Text>
-                <Text>{product.price} ft</Text>
+                <Text>Ár: {product.price}</Text>
                 {
                     product.stock > 0 ?
                         (<Text>Raktáron: {product.stock}db</Text>) :
                         (<Text>Nincs raktáron</Text>)
                 }
-                <Text>{product.rating}/5</Text>
+                <Flex>{renderStars()}</Flex>
             </CardBody>
         </Card>
     );

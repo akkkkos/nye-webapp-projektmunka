@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useReducer, useState, MouseEvent } from 'react';
-import { Text, Flex, Button } from '@chakra-ui/react';
+import { Text, Flex, Button, Grid , GridItem} from '@chakra-ui/react';
 import { useParams, useSearchParams } from "react-router-dom";
 import { Product } from '../model';
 import { ProductsState, ProductSortType } from '../state';
@@ -155,13 +155,20 @@ export const EgyKategoria: FC = () => {
             <Button onClick={handleSortChange} name='priceSortSwitch'>Ár {productsState.orderBy == ProductSortType.PRICE_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.PRICE_DESC ? <Text>▼</Text> : <></>)}</Button>
             <Button onClick={handleSortChange} name='ratingSortSwitch'>Értékelés {productsState.orderBy == ProductSortType.RATING_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.RATING_DESC ? <Text>▼</Text> : <></>)}</Button>
 
-            <Flex flexWrap="wrap" justifyContent="center">
+            <Grid
+                sx={{
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: 12,
+                }}
+            >
                 {
                     productsState.products.map((productData, index) =>
-                        <ProductListElement key={index} {...productData} />
+                        <GridItem key={productData.id}>
+                            <ProductListElement {...productData} />
+                        </GridItem>
                     )
                 }
-            </Flex>
+            </Grid>
         </>
     );
 }
