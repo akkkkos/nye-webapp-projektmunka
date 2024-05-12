@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { User } from '../auth/authContext';
 import { Category } from '../model/Category';
+import { ReducedProducts, Product } from '../model';
+import { ProductSearchParams } from './productsState';
 
 const BASE_URL = 'http://localhost:5000';
 
@@ -44,11 +46,32 @@ export const useWebshopApi = () => {
     return result;
   }, []);
 
+  
+  const getProducts = useCallback(async (query: ProductSearchParams): Promise<ReducedProducts> => {
+
+    const searchParams = new URLSearchParams(query as Record<string, string>);
+
+    const response = await fetch(`${BASE_URL}/products?${searchParams}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error('Hiba termékek lekérdezésénél');
+    }
+    const { data, total } = await response.json();
+    return {
+      products: data,
+      total: total
+    };
+  }, []);
+
+
 
   return {
     login,
     getUserProfile,
-    getCategories
+    getCategories,
+    getProducts
   };
 
 };

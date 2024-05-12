@@ -32,8 +32,8 @@ export const KezdoLap: FC = () => {
                             <Card key={index} margin="2" minWidth={200} onClick={() => handleCardClick(category.id)} size="md" _hover={{ cursor: 'pointer' }}>
                                 <Image
                                     objectFit='none'
-                                    maxW={{ base: '100%', sm: '200px' }}
-                                    src={category.image}
+                                    maxW={{ base: '100%', sm: '400px' }}
+                                    src={`${category.image}?cache=${Math.random()}`}
                                 />
                                 <CardBody>
                                     <Text>{category.name}</Text>
