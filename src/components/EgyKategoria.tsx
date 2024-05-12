@@ -54,7 +54,7 @@ export const EgyKategoria: FC = () => {
             categories: categoryId ? [categoryId] : []
         }
         const _productsData = await getProducts(defaultQuery);
-        console.log(_productsData);
+        // console.log(_productsData);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
@@ -86,7 +86,7 @@ export const EgyKategoria: FC = () => {
             categories: categoryId ? [categoryId] : []
         }
         const _productsData = await getProducts(query);
-        console.log(_productsData);
+        // console.log(_productsData);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
