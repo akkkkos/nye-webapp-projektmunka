@@ -5,9 +5,11 @@ import { FaStar } from "react-icons/fa";
 import { useFormik } from 'formik';
 import { number, object } from 'yup';
 import { useCartContext } from '../../cart/cartContext';
+import { useAuthContext } from '../../auth/authContext';
 
 export const ProductListElement: FC<Product> = (product) => {
     const { addItem, getAmountOfSpecificItemAlreadyInCart, getCartAsRawData } = useCartContext()
+    const { authToken } = useAuthContext()
     const [maxStock, setMaxStock] = useState(product.stock)
     const [alreadyInCart, setAlreadyInCart] = useState(0)
 
@@ -38,7 +40,7 @@ export const ProductListElement: FC<Product> = (product) => {
         },
         onSubmit: async ({ amount }, { setFieldValue, setSubmitting }) => {
             addItem(product, amount)
-            setFieldValue("amount",1)
+            setFieldValue("amount", 1)
         },
         validationSchema: addToCartValidate,
     });
@@ -68,20 +70,27 @@ export const ProductListElement: FC<Product> = (product) => {
                 }
                 <Flex>{renderStars()}</Flex>
                 {
-                    alreadyInCart > 0 &&
-                    <Text>Már {alreadyInCart} darab a kosaradban</Text>
-                }
-                {
-                    (product.stock > 0 && maxStock > 0) &&
-                    <Box marginTop={2} as="form" onSubmit={handleSubmit}>
-                        <Flex>
-                            <FormControl isInvalid={!!errors.amount}>
-                                <Input name="amount" type="number" value={values.amount} onChange={handleChange} />
-                                <FormErrorMessage>{errors.amount}</FormErrorMessage>
-                                <Button paddingInline={6} marginTop={2} type="submit" isDisabled={isSubmitting || isValidating || !isValid}>Kosárba tétel</Button>
-                            </FormControl>
-                        </Flex>
-                    </Box>
+                    authToken &&
+                    (
+                        <>
+                            {
+                                alreadyInCart > 0 &&
+                                <Text>Már {alreadyInCart} darab a kosaradban</Text>
+                            }
+                            {
+                                (product.stock > 0 && maxStock > 0) &&
+                                <Box marginTop={2} as="form" onSubmit={handleSubmit}>
+                                    <Flex>
+                                        <FormControl isInvalid={!!errors.amount}>
+                                            <Input name="amount" type="number" value={values.amount} onChange={handleChange} />
+                                            <FormErrorMessage>{errors.amount}</FormErrorMessage>
+                                            <Button paddingInline={6} marginTop={2} type="submit" isDisabled={isSubmitting || isValidating || !isValid}>Kosárba tétel</Button>
+                                        </FormControl>
+                                    </Flex>
+                                </Box>
+                            }
+                        </>
+                    )
                 }
             </CardBody>
         </Card>
