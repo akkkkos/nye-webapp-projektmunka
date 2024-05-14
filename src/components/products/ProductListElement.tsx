@@ -9,6 +9,7 @@ import { useCartContext } from '../../cart/cartContext';
 export const ProductListElement: FC<Product> = (product) => {
     const { addItem, getAmountOfSpecificItemAlreadyInCart, getCartAsRawData } = useCartContext()
     const [maxStock, setMaxStock] = useState(product.stock)
+    const [alreadyInCart, setAlreadyInCart] = useState(0)
 
     useEffect(() => {
         getAddableMax()
@@ -16,8 +17,9 @@ export const ProductListElement: FC<Product> = (product) => {
 
     const getAddableMax = async () => {
         const getAddable = await getAmountOfSpecificItemAlreadyInCart(product.id)
-        console.log("already in cart:", getAddable)
-        console.log("setmax as:", product.stock - getAddable)
+        //console.log("already in cart:", getAddable)
+        //console.log("setmax as:", product.stock - getAddable)
+        setAlreadyInCart(getAddable)
         setMaxStock(product.stock - getAddable)
     }
 
@@ -65,7 +67,10 @@ export const ProductListElement: FC<Product> = (product) => {
                         (<Text>Nincs raktáron</Text>)
                 }
                 <Flex>{renderStars()}</Flex>
-
+                {
+                    alreadyInCart > 0 &&
+                    <Text>Már {alreadyInCart} darab a kosaradban</Text>
+                }
                 {
                     (product.stock > 0 && maxStock > 0) &&
                     <Box marginTop={2} as="form" onSubmit={handleSubmit}>
