@@ -25,6 +25,7 @@ export interface CartContext {
   addItem: (product: Product, amount: number) => Promise<string | void>;
   getTotalNofItems: () => Promise<number>;
   getCartWithJoinedData: () => Promise<ProductInCartWithData[]>;
+  getAmountOfSpecificItemAlreadyInCart: (id:string) => Promise<number>;
 };
 
 export const createCartContext = () => {

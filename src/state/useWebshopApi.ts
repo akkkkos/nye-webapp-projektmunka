@@ -72,7 +72,7 @@ export const useWebshopApi = () => {
     ids.forEach(id => searchParams.append('id', id));
 
 
-    if (ids.length = 1) {
+    if (ids.length == 1) {
 
       const response = await fetch(`${BASE_URL}/products/${ids[0]}`, {
         method: 'GET',

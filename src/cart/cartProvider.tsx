@@ -12,10 +12,18 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     const addItem: CartContext['addItem'] = useCallback(
         async (product: Product, amount: number): Promise<string | void> => {
             var localCartItems = [...cart.items]
-            localCartItems.push({
-                productId: product.id,
-                amountInCart: amount
-            })
+
+            const productIndex = localCartItems.findIndex(item => item.productId === product.id);
+
+            if (productIndex !== -1) {
+                localCartItems[productIndex].amountInCart += amount;
+            } else {
+                localCartItems.push({
+                    productId: product.id,
+                    amountInCart: amount
+                });
+            }
+
             setCart({
                 items: [...localCartItems]
             })
@@ -25,8 +33,9 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const getTotalNofItems: CartContext['getTotalNofItems'] = useCallback(
         async (): Promise<number> => {
-            console.log(getCartWithJoinedData())
-            return cart.items.length;
+            //console.log(getCartWithJoinedData())
+            const totalItems = cart.items.reduce((sum, item) => sum + item.amountInCart, 0);
+            return totalItems;
         },
         [cart.items]
     );
@@ -76,12 +85,27 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         [cart.items, getProductsByIds(getProductIdsInCart())]
     );
 
+    const getAmountOfSpecificItemAlreadyInCart: CartContext['getAmountOfSpecificItemAlreadyInCart'] = useCallback(
+        async (id: string): Promise<number> => {
+            var amount = 0
+            cart.items.forEach(item => {
+                if (item.productId == id) 
+                    {
+                        amount = item.amountInCart
+                    }
+            });
+            return amount
+        },
+        [cart.items]
+    );
+
     const state: CartContext = useMemo(() => ({
         getCartAsRawData,
         addItem,
         getTotalNofItems,
-        getCartWithJoinedData
-    }), [getCartAsRawData, addItem, getTotalNofItems, getCartWithJoinedData]);
+        getCartWithJoinedData,
+        getAmountOfSpecificItemAlreadyInCart,
+    }), [getCartAsRawData, addItem, getTotalNofItems, getCartWithJoinedData, getAmountOfSpecificItemAlreadyInCart]);
 
 
 

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Card, CardBody, Image, Text, Flex, Box, Button, Input, FormErrorMessage, FormControl } from '@chakra-ui/react';
 import { Product } from '../../model';
 import { FaStar } from "react-icons/fa";
@@ -7,14 +7,28 @@ import { number, object } from 'yup';
 import { useCartContext } from '../../cart/cartContext';
 
 export const ProductListElement: FC<Product> = (product) => {
-    const { addItem } = useCartContext()
+    const { addItem, getAmountOfSpecificItemAlreadyInCart, getCartAsRawData } = useCartContext()
+    const [maxStock, setMaxStock] = useState(product.stock)
 
-    const addToCartValidate = object({
-        amount: number()
-            .required('Kérjük adja meg a mennyiséget')
-            .min(1, 'A mennyiség nem lehet kevesebb, mint 1')
-            .max(product.stock, `A maximális mennyiség ${product.stock}`)
-    });
+    useEffect(() => {
+        getAddableMax()
+    }, [getCartAsRawData()]);
+
+    const getAddableMax = async () => {
+        const getAddable = await getAmountOfSpecificItemAlreadyInCart(product.id)
+        console.log("already in cart:", getAddable)
+        console.log("setmax as:", product.stock - getAddable)
+        setMaxStock(product.stock - getAddable)
+    }
+
+    const addToCartValidate = useCallback(() => {
+        return object({
+            amount: number()
+                .required('Kérjük adja meg a mennyiséget')
+                .min(1, 'A mennyiség nem lehet kevesebb, mint 1')
+                .max(maxStock, `A maximális mennyiség ${maxStock}`)
+        });
+    }, [maxStock]);
 
     const { errors, values, isSubmitting, isValid, isValidating, handleChange, handleSubmit } = useFormik({
         initialValues: {
@@ -22,6 +36,7 @@ export const ProductListElement: FC<Product> = (product) => {
         },
         onSubmit: async ({ amount }, { setFieldValue, setSubmitting }) => {
             addItem(product, amount)
+            setFieldValue("amount",1)
         },
         validationSchema: addToCartValidate,
     });
@@ -52,7 +67,7 @@ export const ProductListElement: FC<Product> = (product) => {
                 <Flex>{renderStars()}</Flex>
 
                 {
-                    product.stock > 0 &&
+                    (product.stock > 0 && maxStock > 0) &&
                     <Box marginTop={2} as="form" onSubmit={handleSubmit}>
                         <Flex>
                             <FormControl isInvalid={!!errors.amount}>
