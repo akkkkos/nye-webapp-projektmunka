@@ -11,6 +11,7 @@ export interface AuthContext {
   user: User | null;
   authToken?: string;
   login: (username: string, password: string) => Promise<string | void>;
+  register: (username: string, password: string, passwordConfirm: string, lastname: string, firstname: string, shippingAddress: object, billingAddress: object) => Promise<string | void>;
   logout: () => void;
 };
 

@@ -4,6 +4,7 @@ import { AuthProvider } from './auth/authProvider';
 import { NavBar } from './components/NavBar';
 import { KezdoLap } from './components/KezdoLap';
 import { Login } from './components/Belepes';
+import { Register } from './components/Regisztracio';
 import { EgyKategoria } from './components/EgyKategoria';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Routes>
             <Route path="/" element={<KezdoLap></KezdoLap>} />
             <Route path="/login" element={<Login></Login>} />
+            <Route path="/register" element={<Register></Register>} />
             <Route path="/category/:categoryId" element={<EgyKategoria />} />
           </Routes>
         </Container>

@@ -13,7 +13,10 @@ export const NavBar: FC = () => {
             {
                 !authToken &&
                 (
+                    <>
                     <Button as={NavLink} to="/login" margin="2">Belépés</Button>
+                    <Button as={NavLink} to="/register" margin="2">Regisztráció</Button>
+                    </>
                 )
             }
             <Button as={NavLink} to="/" margin="2">Kezdőlap</Button>
