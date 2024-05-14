@@ -13,7 +13,7 @@ It is for the [epam-nye-webapp-2024 exam](https://github.com/epam-nye-cooperatio
 | 6.   | [WSA-06 - Kezdőlap](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-06.md)                  |    1     |   Balogh Ákos    |    ✔️    |
 | 7.   | [WSA-07 - Terméklisták](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-07.md)              |    3     |   Balogh Ákos    |    ✔️    |
 | 8.   | [WSA-08 - Termékek](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-08.md)                  |    2     |   Berecz Zsolt   |    🔄    |
-| 9.   | [WSA-09 - Kosárba helyezés](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-09.md)          |    4     |                  |         |
+| 9.   | [WSA-09 - Kosárba helyezés](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-09.md)          |    4     |   Balogh Ákos    |    🔄    |
 | 10.  | [WSA-10 - Kosár oldal](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-10.md)               |    2     |                  |         |
 | 11.  | [WSA-11 - Megrendelés oldal](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-11.md)         |    3     |                  |         |
 | 12.  | [WSA-12 - Felhasználó megrendelései](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-12.md) |    1     |                  |         |
