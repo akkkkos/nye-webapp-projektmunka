@@ -1,13 +1,17 @@
 import React, { FC } from 'react';
-import { Product } from '../../model';
+import { useNavigate, Link } from 'react-router-dom';
+import { Product, Category } from '../../model';
 import { Box, Flex, AspectRatio, Image, VStack, Heading, Text, Badge, Button } from '@chakra-ui/react';
 import { FaStar } from "react-icons/fa";
 
 export interface ProductDetailsProps {
     product: Product;
+    categories: Category[];
 }
 
-export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
+export const ProductDetails: FC<ProductDetailsProps> = ({ product, categories }) => {
+    const navigate = useNavigate();
+
     const renderStars = () => {
         const stars = [];
         for (let i = 1; i <= product.rating; i++) {
@@ -15,9 +19,14 @@ export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
         }
         return stars;
     };
+
+    const handleCategoryClick = (categoryId: string) => {
+        navigate(`/category/${categoryId}`);
+    };
+
     return (
         <Box 
-            as="article" bgColor="gray.900"  p="8" 
+            as="article" bgColor="gray.900" p="8" 
             borderWidth="1px" borderRadius="xl" 
             maxWidth="1000px" mx="auto" 
             boxShadow="2xl" overflow="hidden"
@@ -45,10 +54,10 @@ export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
                             <Heading fontSize="4xl" textTransform="uppercase" color="teal.300">{product.name}</Heading>
                         </Box>
                         <VStack spacing={3} align="flex-start" color="teal.200">
-                        <Flex align="center">
-                            <Badge colorScheme="teal" fontSize="lg" mr="2">Értékelés:</Badge>
+                            <Flex align="center">
+                                <Badge colorScheme="teal" fontSize="lg" mr="2">Értékelés:</Badge>
                                 <Flex>{renderStars()}</Flex>
-                        </Flex>
+                            </Flex>
                             <Badge colorScheme="orange" fontSize="lg">Raktáron: {product.stock}</Badge>
                         </VStack>
                         <Text fontSize="lg" lineHeight="tall" textAlign="justify">{product.description}</Text>
@@ -58,11 +67,32 @@ export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
                             colorScheme="teal"
                             variant="solid"
                         >
-                            Add to Cart
+                            Kosárba
                         </Button>
                     </VStack>
                 </Box>
             </Flex>
+                <Box mt={8} p={4} bg="gray.900" borderRadius="xl" boxShadow="lg">
+                    <Text fontSize="xl" fontWeight="bold" color="white" mb={4}>Kategóriák:</Text>
+                    <Flex alignItems="center">
+                        {categories.map((category, index) => (
+                    <Box key={index} mr={4}>
+                        <Link to={`/category/${category.id}`}>
+                            <VStack spacing={2} alignItems="center">
+                                 <Image 
+                                    src={`${category.image}?cache=${Math.random()}`} 
+                                    objectFit="cover" 
+                                    boxSize="70px" 
+                                    borderRadius="full"
+                                    boxShadow="md"
+                                    />
+                                <Text textAlign="center" color="white">{category.name}</Text>
+                            </VStack>
+                        </Link>
+                    </Box>
+                    ))}
+                    </Flex>
+            </Box>
         </Box>
     );
 };

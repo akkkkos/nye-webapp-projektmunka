@@ -4,6 +4,7 @@ import { Category } from '../model/Category';
 import { ReducedProducts, Product } from '../model';
 import { ProductSearchParams } from './productsState';
 
+
 const BASE_URL = 'http://localhost:5000';
 
 export const useWebshopApi = () => {
@@ -78,7 +79,6 @@ export const useWebshopApi = () => {
     const result: Product = await response.json();
     return result;
   }, []);
-
 
 
   return {
