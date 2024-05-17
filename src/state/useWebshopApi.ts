@@ -99,6 +99,18 @@ export const useWebshopApi = () => {
     }
   }, []);
 
+  const getProductById = useCallback(async (productId:string):Promise<Product> => {
+    const response = await fetch(`${BASE_URL}/products/${productId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error('Hiba termék lekérdezésénél');
+    }
+    const result: Product = await response.json();
+    return result;
+  }, []);
+
 
 
   return {
@@ -106,7 +118,8 @@ export const useWebshopApi = () => {
     getUserProfile,
     getCategories,
     getProducts: getProductsByParams,
-    getProductsByIds
+    getProductsByIds,
+    getProductById
   };
 
 };

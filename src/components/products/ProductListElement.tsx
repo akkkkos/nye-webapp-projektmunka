@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import { number, object } from 'yup';
 import { useCartContext } from '../../cart/cartContext';
 import { useAuthContext } from '../../auth/authContext';
+import { useNavigate } from 'react-router-dom';
 
 export const ProductListElement: FC<Product> = (product) => {
     const { addItem, getAmountOfSpecificItemAlreadyInCart, getCartAsRawData } = useCartContext()
@@ -45,6 +46,8 @@ export const ProductListElement: FC<Product> = (product) => {
         validationSchema: addToCartValidate,
     });
 
+    const navigate = useNavigate()
+
     const renderStars = () => {
         const stars = [];
         for (let i = 1; i <= product.rating; i++) {
@@ -53,8 +56,12 @@ export const ProductListElement: FC<Product> = (product) => {
         return stars;
     };
 
+    const handleProductClick = () => {
+        navigate(`/product/${product.id}`);
+    };
+
     return (
-        <Card margin="2" minWidth={200} size="md" _hover={{ cursor: 'pointer' }}>
+        <Card margin="2" minWidth={200} size="md" _hover={{ cursor: 'pointer' }} onClick={handleProductClick}>
             <Image
                 // objectFit='none'
                 maxW={{ base: '100%', sm: '400px' }}

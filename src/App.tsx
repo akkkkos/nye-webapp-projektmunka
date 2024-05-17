@@ -6,6 +6,8 @@ import { NavBar } from './components/NavBar';
 import { KezdoLap } from './components/KezdoLap';
 import { Login } from './components/Belepes';
 import { EgyKategoria } from './components/EgyKategoria';
+import { ProductPage } from './components/products/Product-page';
+
 
 function App() {
   if (!localStorage.getItem("chakra-ui-color-mode-default")) {
@@ -17,15 +19,16 @@ function App() {
     <ChakraProvider>
       <AuthProvider>
         <CartProvider>
-          <Container maxWidth="7xl">
-            <NavBar />
-            <Divider marginBottom="2" />
-            <Routes>
-              <Route path="/" element={<KezdoLap></KezdoLap>} />
-              <Route path="/login" element={<Login></Login>} />
-              <Route path="/category/:categoryId" element={<EgyKategoria />} />
-            </Routes>
-          </Container>
+        <Container maxWidth="7xl">
+          <NavBar />
+          <Divider marginBottom="2" />
+          <Routes>
+            <Route path="/" element={<KezdoLap></KezdoLap>} />
+            <Route path="/login" element={<Login></Login>} />
+            <Route path="/category/:categoryId" element={<EgyKategoria />} />
+            <Route path="/product/:productId" element={<ProductPage />} />
+          </Routes>
+        </Container>
         </CartProvider>
       </AuthProvider>
     </ChakraProvider>
