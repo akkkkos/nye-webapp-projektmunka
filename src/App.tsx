@@ -27,6 +27,7 @@ function App() {
             <Route path="/login" element={<Login></Login>} />
             <Route path="/category/:categoryId" element={<EgyKategoria />} />
             <Route path="/product/:productId" element={<ProductPage />} />
+            <Route path="/cart" element={<></>} />
           </Routes>
         </Container>
         </CartProvider>

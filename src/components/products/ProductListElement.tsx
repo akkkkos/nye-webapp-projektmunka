@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Card, CardBody, Image, Text, Flex, Box, Button, Input, FormErrorMessage, FormControl } from '@chakra-ui/react';
+import { Card, CardBody, Image, Text, Flex, Box, Button, Input, FormErrorMessage, FormControl, Divider } from '@chakra-ui/react';
 import { Product } from '../../model';
 import { FaStar } from "react-icons/fa";
 import { useFormik } from 'formik';
@@ -61,11 +61,12 @@ export const ProductListElement: FC<Product> = (product) => {
     };
 
     return (
-        <Card margin="2" minWidth={200} size="md" _hover={{ cursor: 'pointer' }} onClick={handleProductClick}>
+        <Card margin="2" minWidth={200} size="md">
             <Image
                 // objectFit='none'
                 maxW={{ base: '100%', sm: '400px' }}
                 src={`${product.image}?cache=${Math.random()}`}
+                _hover={{ cursor: 'pointer' }} onClick={handleProductClick}
             />
             <CardBody>
                 <Text>{product.name}</Text>
@@ -76,10 +77,12 @@ export const ProductListElement: FC<Product> = (product) => {
                         (<Text>Nincs raktáron</Text>)
                 }
                 <Flex>{renderStars()}</Flex>
+
                 {
                     authToken &&
                     (
                         <>
+                            <Divider marginTop={3} marginBottom={3} />
                             {
                                 alreadyInCart > 0 &&
                                 <Text>Már {alreadyInCart} darab a kosaradban</Text>
@@ -91,7 +94,10 @@ export const ProductListElement: FC<Product> = (product) => {
                                         <FormControl isInvalid={!!errors.amount}>
                                             <Input name="amount" type="number" value={values.amount} onChange={handleChange} />
                                             <FormErrorMessage>{errors.amount}</FormErrorMessage>
-                                            <Button paddingInline={6} marginTop={2} type="submit" isDisabled={isSubmitting || isValidating || !isValid}>Kosárba tétel</Button>
+                                            <Button paddingInline={4} marginTop={2} type="submit" isDisabled={isSubmitting || isValidating || !isValid}
+                                                size="md"
+                                                colorScheme="teal"
+                                            >Kosárba tétel</Button>
                                         </FormControl>
                                     </Flex>
                                 </Box>

@@ -4,15 +4,16 @@ import { FaShoppingCart } from "react-icons/fa";
 import { Link as NavLink } from 'react-router-dom';
 import { useAuthContext } from '../auth/authContext';
 import { useCartContext } from '../cart/cartContext';
+import { useNavigate } from 'react-router-dom';
 
 
 
 export const NavBar: FC = () => {
     const { authToken } = useAuthContext();
     const { getTotalNofItems } = useCartContext();
-
     const [totalItems, setTotalItems] = useState<number>(0);
 
+    
     useEffect(() => {
         const fetchTotalItems = async () => {
             const total = await getTotalNofItems();
@@ -20,6 +21,11 @@ export const NavBar: FC = () => {
         };
         fetchTotalItems();
     }, [getTotalNofItems]);
+    
+    const navigate = useNavigate();
+    const handleGotoCart = () => {
+        navigate("/cart")
+    }
 
     return (
         <Flex justifyContent="space-between" marginBottom="2" marginTop="4" alignItems="center">
@@ -28,7 +34,7 @@ export const NavBar: FC = () => {
                 {
                     authToken &&
                     (
-                        <Box display="flex" alignItems="center" borderRadius="md" padding="2" marginLeft="2" _hover={{ cursor: 'pointer' }}>
+                        <Box display="flex" alignItems="center" borderRadius="md" padding="2" marginLeft="2" _hover={{ cursor: 'pointer' }} onClick={handleGotoCart}>
                             <FaShoppingCart />
                             <Text marginLeft="2">{totalItems}</Text>
                         </Box>
