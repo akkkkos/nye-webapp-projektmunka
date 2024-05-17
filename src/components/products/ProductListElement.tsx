@@ -2,8 +2,11 @@ import React, { FC } from 'react';
 import { Card, CardBody, Image, Text, Flex } from '@chakra-ui/react';
 import { Product } from '../../model';
 import { FaStar } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 export const ProductListElement: FC<Product> = (product) => {
+
+    const navigate = useNavigate()
 
     const renderStars = () => {
         const stars = [];
@@ -13,8 +16,12 @@ export const ProductListElement: FC<Product> = (product) => {
         return stars;
     };
 
+    const handleProductClick = () => {
+        navigate(`/product/${product.id}`);
+    };
+
     return (
-        <Card margin="2" minWidth={200} size="md" _hover={{ cursor: 'pointer' }}>
+        <Card margin="2" minWidth={200} size="md" _hover={{ cursor: 'pointer' }} onClick={handleProductClick}>
             <Image
                 // objectFit='none'
                 maxW={{ base: '100%', sm: '400px' }}
