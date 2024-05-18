@@ -4,6 +4,7 @@ import { Category } from '../model/Category';
 import { ReducedProducts, Product } from '../model';
 import { ProductSearchParams } from './productsState';
 
+
 const BASE_URL = 'http://localhost:5000';
 
 export const useWebshopApi = () => {
@@ -65,13 +66,27 @@ export const useWebshopApi = () => {
     };
   }, []);
 
+  const getProductById = useCallback(async (productId:string):Promise<Product> => {
+
+
+    const response = await fetch(`${BASE_URL}/products/${productId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error('Hiba termék lekérdezésénél');
+    }
+    const result: Product = await response.json();
+    return result;
+  }, []);
 
 
   return {
     login,
     getUserProfile,
     getCategories,
-    getProducts
+    getProducts,
+    getProductById
   };
 
 };
