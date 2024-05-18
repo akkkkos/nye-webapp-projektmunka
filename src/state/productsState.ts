@@ -34,7 +34,7 @@ export interface ProductSearchParams {
     maxPrice?: number;
     minRate?: number;
     maxRate?: number;
-    categories?: string[];
+    categories?: string[] | null;
     orderBy?: ProductSortType;
     offset?: number;
     limit?: number;
