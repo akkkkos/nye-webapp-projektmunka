@@ -47,8 +47,8 @@ export const useWebshopApi = () => {
     return result;
   }, []);
 
-  
-  const getProducts = useCallback(async (query: ProductSearchParams): Promise<ReducedProducts> => {
+
+  const getProductsByParams = useCallback(async (query: ProductSearchParams): Promise<ReducedProducts> => {
 
     const searchParams = new URLSearchParams(query as Record<string, string>);
 
@@ -66,9 +66,41 @@ export const useWebshopApi = () => {
     };
   }, []);
 
+  const getProductsByIds = useCallback(async (ids: string[]): Promise<Product[]> => {
+    if (ids.length == 0) return []
+
+    const searchParams = new URLSearchParams();
+    ids.forEach(id => searchParams.append('id', id));
+
+
+    if (ids.length == 1) {
+
+      const response = await fetch(`${BASE_URL}/products/${ids[0]}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error('Hiba termék lekérdezésénél');
+      }
+      const resultOne: Product = await response.json();
+      return [resultOne];
+
+    } else {
+
+
+      const response = await fetch(`${BASE_URL}/products/list?${searchParams}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error('Hiba termékek lekérdezésénél');
+      }
+      const result: Product[] = await response.json();
+      return result;
+    }
+  }, []);
+
   const getProductById = useCallback(async (productId:string):Promise<Product> => {
-
-
     const response = await fetch(`${BASE_URL}/products/${productId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -85,7 +117,8 @@ export const useWebshopApi = () => {
     login,
     getUserProfile,
     getCategories,
-    getProducts,
+    getProducts: getProductsByParams,
+    getProductsByIds,
     getProductById
   };
 
