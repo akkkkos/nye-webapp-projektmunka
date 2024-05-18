@@ -1,17 +1,20 @@
+
 import React, { FC, useState, useEffect, useCallback } from 'react';
-import { Product } from '../../model';
 import { Box, Flex, AspectRatio, Image, VStack, Heading, Text, Badge, Button, FormControl, Input, FormErrorMessage, Divider } from '@chakra-ui/react';
+import { Product, Category } from '../../model';
 import { FaStar } from "react-icons/fa";
 import { useAuthContext } from '../../auth/authContext';
 import { useCartContext } from '../../cart/cartContext';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { number, object } from 'yup';
 
 export interface ProductDetailsProps {
     product: Product;
+    categories: Category[];
 }
 
-export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
+export const ProductDetails: FC<ProductDetailsProps> = ({ product, categories }) => {
     const { addItem, getAmountOfSpecificItemAlreadyInCart, getCartAsRawData } = useCartContext()
     const { authToken } = useAuthContext()
     const [maxStock, setMaxStock] = useState(product.stock)
@@ -47,7 +50,7 @@ export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
         validationSchema: addToCartValidate,
     });
 
-
+    const navigate = useNavigate();
 
     const renderStars = () => {
         const stars = [];
@@ -56,6 +59,11 @@ export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
         }
         return stars;
     };
+
+    const handleCategoryClick = (categoryId: string) => {
+        navigate(`/category/${categoryId}`);
+    };
+
     return (
         <Box
             as="article" bgColor="gray.900" p="8"
@@ -97,7 +105,7 @@ export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
                             authToken &&
                             (
                                 <>
-                                    <Divider/>
+                                    <Divider />
                                     {
                                         alreadyInCart > 0 &&
                                         <Text fontSize="lg" lineHeight="tall">Már {alreadyInCart} darab a kosaradban</Text>
@@ -126,6 +134,27 @@ export const ProductDetails: FC<ProductDetailsProps> = ({ product }) => {
                     </VStack>
                 </Box>
             </Flex>
+            <Box mt={8} p={4} bg="gray.900" borderRadius="xl" boxShadow="lg">
+                <Text fontSize="xl" fontWeight="bold" color="white" mb={4}>Kategóriák:</Text>
+                <Flex alignItems="center">
+                    {categories.map((category, index) => (
+                        <Box key={index} mr={4}>
+                            <Link to={`/category/${category.id}`}>
+                                <VStack spacing={2} alignItems="center">
+                                    <Image
+                                        src={`${category.image}?cache=${Math.random()}`}
+                                        objectFit="cover"
+                                        boxSize="70px"
+                                        borderRadius="full"
+                                        boxShadow="md"
+                                    />
+                                    <Text textAlign="center" color="white">{category.name}</Text>
+                                </VStack>
+                            </Link>
+                        </Box>
+                    ))}
+                </Flex>
+            </Box>
         </Box>
     );
 };
