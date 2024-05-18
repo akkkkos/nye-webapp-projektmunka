@@ -5,7 +5,7 @@ import { CartProvider } from './cart/cartProvider';
 import { NavBar } from './components/NavBar';
 import { KezdoLap } from './components/KezdoLap';
 import { Login } from './components/Belepes';
-import { EgyKategoria } from './components/EgyKategoria';
+import { TermekLista } from './components/TermekLista';
 import { ProductPage } from './components/products/Product-page';
 
 
@@ -25,9 +25,10 @@ function App() {
           <Routes>
             <Route path="/" element={<KezdoLap></KezdoLap>} />
             <Route path="/login" element={<Login></Login>} />
-            <Route path="/category/:categoryId" element={<EgyKategoria />} />
+            <Route path="/category/:categoryId" element={<TermekLista isSearch={false}/>} />
             <Route path="/product/:productId" element={<ProductPage />} />
             <Route path="/cart" element={<></>} />
+            <Route path="/search" element={<TermekLista isSearch={true}/>} />
           </Routes>
         </Container>
         </CartProvider>
