@@ -41,6 +41,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         logout,
         authToken,
         user,
+        setUser
     }), [login, logout, user, authToken]);
 
 

@@ -5,6 +5,8 @@ import { NavBar } from './components/NavBar';
 import { KezdoLap } from './components/KezdoLap';
 import { Login } from './components/Belepes';
 import { EgyKategoria } from './components/EgyKategoria';
+import { UserProfile } from './components/Profil';
+
 
 function App() {
   if (!localStorage.getItem("chakra-ui-color-mode-default")) {
@@ -21,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<KezdoLap></KezdoLap>} />
             <Route path="/login" element={<Login></Login>} />
+            <Route path="/profile" element={<UserProfile ></UserProfile>} />
             <Route path="/category/:categoryId" element={<EgyKategoria />} />
           </Routes>
         </Container>
