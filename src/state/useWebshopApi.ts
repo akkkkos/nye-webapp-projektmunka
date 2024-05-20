@@ -65,13 +65,35 @@ export const useWebshopApi = () => {
     };
   }, []);
 
+  const putUserData = useCallback(async (authToken: string | undefined, firstName: string, lastName: string): Promise<void> => {
+    
+    if (!authToken) {
+      throw new Error('Auth token is undefined');
+  }
+    const requestBody = JSON.stringify({ firstName, lastName });
+
+    const response = await fetch(`${BASE_URL}/user`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+        },
+        body: requestBody,
+    });
+
+    if (!response.ok) {
+        throw new Error(response.status===401?'Hiba felhasználói adatok frissítése közben': 'Más hiba történt a felhasználói adatok frissítése közben');
+    }
+    
+}, []);
 
 
   return {
     login,
     getUserProfile,
     getCategories,
-    getProducts
+    getProducts,
+    putUserData
   };
 
 };

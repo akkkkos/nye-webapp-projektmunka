@@ -4,11 +4,11 @@ import { useAuthContext } from '../auth/authContext';
 import { AuthProvider } from '../auth/authProvider';
 import { UserEditorForm } from './AdatMentes';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import { useWebshopApi } from '../state/useWebshopApi';
 
 export const UserProfile: FC = () => {
   const { user, logout, authToken,setUser} = useAuthContext();
-  
+  const { putUserData } = useWebshopApi();
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
@@ -24,9 +24,16 @@ export const UserProfile: FC = () => {
     }
   },[authToken] )
   const [userData, setUserData,] = useState<any>(null);
-  const handleEditSubmit = (firstName: string, lastName: string) => {
+  const handleEditSubmit = async(firstName: string, lastName: string) => {
     // Töltsd fel az adatokat a szervert
-    // onSubmit(firstName, lastName);
+    
+    try {
+      await putUserData(authToken, firstName, lastName);
+      setIsEditing(false);
+      setUserData({ ...userData, firstName: firstName, lastName: lastName });
+  } catch (error) {
+      console.error('Error while submitting data:', error);
+  }// onSubmit(firstName, lastName);
     setIsEditing(false); // Visszaállítjuk a szerkesztési módot
     setUserData({ ...userData, firstName: firstName, lastName: lastName });
     
