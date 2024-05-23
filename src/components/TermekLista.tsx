@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useReducer, useState, MouseEvent } from 'react';
-import { Text, Flex, Button, Grid, GridItem,Box } from '@chakra-ui/react';
+import { Text, Flex, Button, Grid, GridItem,Box, Input, Checkbox, Stack, Heading } from '@chakra-ui/react';
 import { useParams, useSearchParams } from "react-router-dom";
 import { Product } from '../model';
 import { ProductsState, ProductSortType } from '../state';
@@ -7,6 +7,7 @@ import { ProductsStateReducer, productsReducer } from '../state/productsReducer'
 import { useWebshopApi } from '../state/useWebshopApi';
 import { ProductSearchParams } from '../state/productsState';
 import { ProductListElement } from './products/ProductListElement';
+import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
 export const INITIAL_STATE: ProductsState = {
     products: [],
@@ -16,7 +17,6 @@ export const INITIAL_STATE: ProductsState = {
     offset: 0,
     limit: 6
 };
-
 // Keresési oldalon
 export const INITIAL_SEARCH_STATE: ProductsState = {
     products: [],
@@ -33,7 +33,7 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
     const [productsState, productsDispatch] = useReducer<ProductsStateReducer>(
         productsReducer,
         isSearch ? INITIAL_SEARCH_STATE : INITIAL_STATE // Keresési oldalon használja a keresési alapértelmezett állapotot, egyébként a nem keresési alapértelmezett állapotot
-    );
+    );    
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
     const [pageCount, setPageCount] = useState(1);
 
@@ -42,6 +42,9 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
     useEffect(() => {
         loadProducts()
     }, []);
+
+
+    
 
     useEffect(() => {
         setSearchParams({ "orderBy": productsState.orderBy, "page": pageCount.toString() });
@@ -62,23 +65,23 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
 
         var defaultQuery: ProductSearchParams = categoryId ?
             {
-                limit: INITIAL_SEARCH_STATE.limit,
-                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE.offset,
-                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE.orderBy,
+                limit: INITIAL_SEARCH_STATE .limit,
+                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE .offset,
+                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE .orderBy,
                 categories: [categoryId]
             } :
             {
-                limit: INITIAL_SEARCH_STATE.limit,
-                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE.offset,
-                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE.orderBy
+                limit: INITIAL_SEARCH_STATE .limit,
+                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE .offset,
+                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE .orderBy
             }
         const _productsData = await getProducts(defaultQuery);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
     const handleKeresesClick = () => {
-        setShowDetailedSearch(!showDetailedSearch);
-    };
+            setShowDetailedSearch(!showDetailedSearch);
+        };
 
     const handleKovetkezoOldal = (e: MouseEvent<HTMLButtonElement>) => {
         const newOldal = pageCount + 1
@@ -164,47 +167,61 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
 
 
     return (
-        <> 
+        <>
             {isSearch && (
-                <>
-                    <Button onClick={handleKeresesClick}>Termékek Részletes </Button>
+                <Box mb={6}>
+                    <Button onClick={handleKeresesClick} colorScheme="teal" size="lg" mb={4}>
+                        Termékek Részletes Szűrése!
+                    </Button>
                     {showDetailedSearch && (
-                        <Box>
-                            {/* Részletes keresési doboz tartalma */}
-                            <Text>Részletes keresési doboz tartalma itt</Text>
+                        <Box border="1px" borderColor="gray.200" p={4} borderRadius="md" boxShadow="sm">
+                            <Stack spacing={4}>
+                                <Input name="query" placeholder="Keresés" onChange={handleKeresesClick} />
+                                <Flex>
+                                    <Input name="minPrice" placeholder="Minimum ár" type="number" onChange={handleKeresesClick} mr={2} />
+                                    <Input name="maxPrice" placeholder="Maximum ár" type="number" onChange={handleKeresesClick} />
+                                </Flex>
+                                <Checkbox name="inStock" onChange={handleKeresesClick}>Készleten</Checkbox>
+                                <Flex>
+                                    <Input name="minRate" placeholder="Minimum értékelés" type="number" onChange={handleKeresesClick} mr={2} />
+                                    <Input name="maxRate" placeholder="Maximum értékelés" type="number" onChange={handleKeresesClick} />
+                                </Flex>
+                                <Button onClick={handleKeresesClick} colorScheme="blue">Szűrés</Button>
+                            </Stack>
                         </Box>
                     )}
-                </>
+                </Box>
             )}
-    
-
 
             {/* Közös rész a keresési és nem keresési oldalon */}
-            <Text>Összes termék{categoryId ? " ebben a kategóriában" : ""}: {productsState.total}db</Text>
+            <Heading as="h2" size="lg" mb={4}>Összes termék{categoryId ? " ebben a kategóriában" : ""}: {productsState.total}db</Heading>
             {productsState.total > 6 && (
-                <>
-                    <Text>Oldal: {pageCount}</Text>
-                    <Button onClick={handleElozoOldal}>Előző</Button>
-                    <Button onClick={handleKovetkezoOldal}>Következő</Button>
-                </>
+                <Flex align="center" mb={4}>
+                 <Text mr={4}>Oldal: {pageCount}</Text>
+                    <Button onClick={handleElozoOldal} mr={2} disabled={pageCount === 1}>Előző</Button>
+                    <Button onClick={handleKovetkezoOldal} disabled={(pageCount - 1) * 6 >= productsState.total}>Következő</Button>
+                </Flex>
             )}
-    
-            <Text>Sorba rendezés:</Text>
-            <Button onClick={handleSortChange} name='nameSortSwitch'>Név {productsState.orderBy == ProductSortType.NAME_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.NAME_DESC ? <Text>▼</Text> : <></>)}</Button>
-            <Button onClick={handleSortChange} name='priceSortSwitch'>Ár {productsState.orderBy == ProductSortType.PRICE_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.PRICE_DESC ? <Text>▼</Text> : <></>)}</Button>
-            <Button onClick={handleSortChange} name='ratingSortSwitch'>Értékelés {productsState.orderBy == ProductSortType.RATING_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.RATING_DESC ? <Text>▼</Text> : <></>)}</Button>
-    
-            <Grid
-                sx={{
-                    gridTemplateColumns: "repeat(3, 1fr)",
-                    gap: 12,
-                }}
-            >
-                {productsState.products.map((productData, index) =>
+
+            <Heading as="h3" size="md" mb={4}>Sorba rendezés:</Heading>
+            <Flex mb={6}>
+                <Button onClick={handleSortChange} name='nameSortSwitch' mr={2}>
+                    Név {productsState.orderBy === ProductSortType.NAME_ASC ? (<FaArrowUp />) : (productsState.orderBy === ProductSortType.NAME_DESC ? <FaArrowDown /> : <></>)}
+                </Button>
+                <Button onClick={handleSortChange} name='priceSortSwitch' mr={2}>
+                    Ár {productsState.orderBy === ProductSortType.PRICE_ASC ? (<FaArrowUp />) : (productsState.orderBy === ProductSortType.PRICE_DESC ? <FaArrowDown /> : <></>)}
+                </Button>
+                <Button onClick={handleSortChange} name='ratingSortSwitch'>
+                    Értékelés {productsState.orderBy === ProductSortType.RATING_ASC ? (<FaArrowUp />) : (productsState.orderBy === ProductSortType.RATING_DESC ? <FaArrowDown /> : <></>)}
+                </Button>
+            </Flex>
+
+            <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+                {productsState.products.map((productData, index) => (
                     <GridItem key={productData.id}>
                         <ProductListElement {...productData} />
                     </GridItem>
-                )}
+                ))}
             </Grid>
         </>
     );
