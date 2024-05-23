@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useReducer, useState, MouseEvent } from 'react';
-import { Text, Flex, Button, Grid, GridItem } from '@chakra-ui/react';
+import { Text, Flex, Button, Grid, GridItem,Box } from '@chakra-ui/react';
 import { useParams, useSearchParams } from "react-router-dom";
 import { Product } from '../model';
 import { ProductsState, ProductSortType } from '../state';
@@ -21,7 +21,7 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
     const { categoryId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const [productsState, productsDispatch] = useReducer<ProductsStateReducer>(productsReducer, INITIAL_STATE)
-
+    const [showDetailedSearch, setShowDetailedSearch] = useState(false);
     const [pageCount, setPageCount] = useState(1);
 
     const { getProducts } = useWebshopApi();
@@ -62,6 +62,10 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
         const _productsData = await getProducts(defaultQuery);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
+
+    const handleKeresesClick = () => {
+        setShowDetailedSearch(!showDetailedSearch);
+    };
 
     const handleKovetkezoOldal = (e: MouseEvent<HTMLButtonElement>) => {
         const newOldal = pageCount + 1
@@ -142,43 +146,56 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
         }
 
         reloadProducts(productsState.offset, newOrderBy);
+
     }
 
 
     return (
-        <>
+        <> 
+            {isSearch && (
+                <>
+                    <Button onClick={handleKeresesClick}>Termékek Részletes </Button>
+                    {showDetailedSearch && (
+                        <Box>
+                            {/* Részletes keresési doboz tartalma */}
+                            <Text>Részletes keresési doboz tartalma itt</Text>
+                        </Box>
+                    )}
+                </>
+            )}
+    
+
+
+            {/* Közös rész a keresési és nem keresési oldalon */}
             <Text>Összes termék{categoryId ? " ebben a kategóriában" : ""}: {productsState.total}db</Text>
-
-            {
-                productsState.total > 6 &&
-                (
-                    <>
-                        <Text>Oldal: {pageCount}</Text>
-                        <Button onClick={handleElozoOldal}>Előző</Button>
-                        <Button onClick={handleKovetkezoOldal}>Következő</Button>
-                    </>
-                )
-            }
-
+            {productsState.total > 6 && (
+                <>
+                    <Text>Oldal: {pageCount}</Text>
+                    <Button onClick={handleElozoOldal}>Előző</Button>
+                    <Button onClick={handleKovetkezoOldal}>Következő</Button>
+                </>
+            )}
+    
             <Text>Sorba rendezés:</Text>
             <Button onClick={handleSortChange} name='nameSortSwitch'>Név {productsState.orderBy == ProductSortType.NAME_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.NAME_DESC ? <Text>▼</Text> : <></>)}</Button>
             <Button onClick={handleSortChange} name='priceSortSwitch'>Ár {productsState.orderBy == ProductSortType.PRICE_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.PRICE_DESC ? <Text>▼</Text> : <></>)}</Button>
             <Button onClick={handleSortChange} name='ratingSortSwitch'>Értékelés {productsState.orderBy == ProductSortType.RATING_ASC ? (<Text>▲</Text>) : (productsState.orderBy == ProductSortType.RATING_DESC ? <Text>▼</Text> : <></>)}</Button>
-
+    
             <Grid
                 sx={{
                     gridTemplateColumns: "repeat(3, 1fr)",
                     gap: 12,
                 }}
             >
-                {
-                    productsState.products.map((productData, index) =>
-                        <GridItem key={productData.id}>
-                            <ProductListElement {...productData} />
-                        </GridItem>
-                    )
-                }
+                {productsState.products.map((productData, index) =>
+                    <GridItem key={productData.id}>
+                        <ProductListElement {...productData} />
+                    </GridItem>
+                )}
             </Grid>
         </>
     );
+    
+    
+
 }

@@ -26,6 +26,12 @@ export const NavBar: FC = () => {
     const handleGotoCart = () => {
         navigate("/cart")
     }
+    const handleSearch = () => {
+        
+        navigate("/search", { state: { isSearch: true } });
+       
+    
+}
 
     return (
         <Flex justifyContent="space-between" marginBottom="2" marginTop="4" alignItems="center">
@@ -40,6 +46,9 @@ export const NavBar: FC = () => {
                         </Box>
                     )
                 }
+            </Flex>
+            <Flex justifyContent="center" alignItems="center">
+                <Button onClick={handleSearch} marginLeft="2">Keresés</Button>
             </Flex>
             <Flex>
 
