@@ -17,10 +17,23 @@ export const INITIAL_STATE: ProductsState = {
     limit: 6
 };
 
+// Keresési oldalon
+export const INITIAL_SEARCH_STATE: ProductsState = {
+    products: [],
+    total: 0,
+    categories: ["cameras-photos"],
+    orderBy: ProductSortType.RATING_DESC, // Alapértelmezett rendezés értékelés szerinti csökkenő sorrend
+    offset: 0,
+    limit: 6
+};
+
 export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => {
     const { categoryId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
-    const [productsState, productsDispatch] = useReducer<ProductsStateReducer>(productsReducer, INITIAL_STATE)
+    const [productsState, productsDispatch] = useReducer<ProductsStateReducer>(
+        productsReducer,
+        isSearch ? INITIAL_SEARCH_STATE : INITIAL_STATE // Keresési oldalon használja a keresési alapértelmezett állapotot, egyébként a nem keresési alapértelmezett állapotot
+    );
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
     const [pageCount, setPageCount] = useState(1);
 
@@ -49,15 +62,15 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
 
         var defaultQuery: ProductSearchParams = categoryId ?
             {
-                limit: INITIAL_STATE.limit,
-                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
-                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy,
+                limit: INITIAL_SEARCH_STATE.limit,
+                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE.offset,
+                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE.orderBy,
                 categories: [categoryId]
             } :
             {
-                limit: INITIAL_STATE.limit,
-                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
-                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy
+                limit: INITIAL_SEARCH_STATE.limit,
+                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE.offset,
+                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE.orderBy
             }
         const _productsData = await getProducts(defaultQuery);
         productsDispatch({ type: 'setResults', payload: _productsData });
