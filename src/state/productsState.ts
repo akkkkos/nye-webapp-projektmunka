@@ -32,6 +32,7 @@ export interface ProductSearchParams {
     query?: string;
     minPrice?: number;
     maxPrice?: number;
+    inStock?: boolean;
     minRate?: number;
     maxRate?: number;
     categories?: string[] | null;

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Flex, Button, Card, Text, Box } from '@chakra-ui/react';
+import { Flex, Button, Card, Text, Box,Input  } from '@chakra-ui/react';
 import { FaShoppingCart } from "react-icons/fa";
 import { Link as NavLink } from 'react-router-dom';
 import { useAuthContext } from '../auth/authContext';
@@ -12,6 +12,7 @@ export const NavBar: FC = () => {
     const { authToken } = useAuthContext();
     const { getTotalNofItems } = useCartContext();
     const [totalItems, setTotalItems] = useState<number>(0);
+    const [searchInput, setSearchInput] = useState<string>('');
 
     
     useEffect(() => {
@@ -27,11 +28,10 @@ export const NavBar: FC = () => {
         navigate("/cart")
     }
     const handleSearch = () => {
-        
-        navigate("/search", { state: { isSearch: true } });
-       
-    
-}
+        if (searchInput.trim() !== '') {
+            navigate("/search", { state: { isSearch: true, query: searchInput } });
+        }
+    }
 
     return (
         <Flex justifyContent="space-between" marginBottom="2" marginTop="4" alignItems="center">
@@ -48,8 +48,15 @@ export const NavBar: FC = () => {
                 }
             </Flex>
             <Flex justifyContent="center" alignItems="center">
-                <Button onClick={handleSearch} marginLeft="2">Keresés</Button>
+                <Input 
+                    placeholder="Kifejezés keresése"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    marginRight="2"
+                />
+                <Button onClick={handleSearch}>Keresés</Button>
             </Flex>
+
             <Flex>
 
             </Flex>
