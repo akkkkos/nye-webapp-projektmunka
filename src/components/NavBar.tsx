@@ -6,7 +6,7 @@ import { useAuthContext } from '../auth/authContext';
 
 
 export const NavBar: FC = () => {
-    const { authToken } = useAuthContext();
+    const { authToken,user} = useAuthContext();
 
     return (
         <Flex justifyContent="end" marginBottom="2" marginTop="4" alignItems="right">
@@ -17,8 +17,14 @@ export const NavBar: FC = () => {
                     
                 )
             }
+
             <Button as={NavLink} to="/" margin="2">Kezdőlap</Button>
-            <Button as={NavLink} to="/profile" margin="2">Profil</Button>
+            {
+                user &&
+            (
+                <Button as={NavLink} to="/profile" margin="2">Profil</Button>
+            )
+            }
             
         </Flex>
     );

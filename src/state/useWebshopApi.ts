@@ -24,6 +24,7 @@ export const useWebshopApi = () => {
   const getUserProfile = useCallback(
     async (authToken: string): Promise<User> => {
       const response = await fetch(`${BASE_URL}/user`, {
+        method: 'GET',
         headers: { 'Authorization': `Bearer ${authToken}` },
       });
       if (!response.ok) {
@@ -82,18 +83,40 @@ export const useWebshopApi = () => {
     });
 
     if (!response.ok) {
-        throw new Error(response.status===401?'Hiba felhasználói adatok frissítése közben': 'Más hiba történt a felhasználói adatok frissítése közben');
+        throw new Error(response.status===401?'Hiba felhasználói adatok frissítése közben': 'Más hiba történt a felhasználói adatok frissítése közben'|| response.status===400? 'A bevitt adatok érvénytelenek':'Hibás adatok');
     }
     
 }, []);
 
+
+const patchPassword = useCallback(async (authToken: string, oldPassword: string, password: string, passwordConfirm: string): Promise<void> => {
+  if (!authToken) {
+    throw new Error('Hiányzó vagy érvénytelen token.');
+  }
+
+  const requestBody = JSON.stringify({ oldPassword, password, passwordConfirm });
+
+  const response = await fetch(`${BASE_URL}/user/login`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authToken}`,
+    },
+    body: requestBody,
+  });
+
+  if (!response.ok) {
+    throw new Error(response.status === 401 ? 'Hibás adatok' : 'Ismeretlen hiba történt.');
+  }
+}, []);
 
   return {
     login,
     getUserProfile,
     getCategories,
     getProducts,
-    putUserData
+    putUserData,
+    patchPassword
   };
 
 };

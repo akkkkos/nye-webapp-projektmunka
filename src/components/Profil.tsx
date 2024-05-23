@@ -5,18 +5,20 @@ import { AuthProvider } from '../auth/authProvider';
 import { UserEditorForm } from './AdatMentes';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useWebshopApi } from '../state/useWebshopApi';
+import ChangePassword from './JelszoModositas'; // Importáljuk a jelszó módosítás komponenst
 
 export const UserProfile: FC = () => {
   const { user, logout, authToken,setUser} = useAuthContext();
   const { putUserData } = useWebshopApi();
   const [isEditing, setIsEditing] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false); // Állapot a jelszó módosításához
   const navigate = useNavigate();
   useEffect(() => {
-    // Set user data if logged in
+ 
     if (user) {
       setUserData(user);
     }
-  }, [user]); // Re-run effect when `user` changes
+  }, [user]); 
 
   useEffect(()=>{
     if (authToken===null){
@@ -25,7 +27,7 @@ export const UserProfile: FC = () => {
   },[authToken] )
   const [userData, setUserData,] = useState<any>(null);
   const handleEditSubmit = async(firstName: string, lastName: string) => {
-    // Töltsd fel az adatokat a szervert
+    
     
     try {
       await putUserData(authToken, firstName, lastName);
@@ -33,17 +35,17 @@ export const UserProfile: FC = () => {
       setUserData({ ...userData, firstName: firstName, lastName: lastName });
   } catch (error) {
       console.error('Error while submitting data:', error);
-  }// onSubmit(firstName, lastName);
-    setIsEditing(false); // Visszaállítjuk a szerkesztési módot
+  }
+    setIsEditing(false); 
     setUserData({ ...userData, firstName: firstName, lastName: lastName });
     
     
   };
   const handleSaveSubmit = (firstName: string, lastName: string) => {
-    // Extra tevékenységek mentéskor
-   // setUser(userData.firstName, userData.lastName)
+    
     console.log('Save submit:', firstName, lastName);
   };
+  
    if (!user) {
     return (
       <Box textAlign="center">
@@ -63,8 +65,8 @@ export const UserProfile: FC = () => {
             firstName={userData?.firstName?? ''}
             lastName={userData?.lastName?? ''}
             onSubmit={handleEditSubmit}
-             onSaveSubmit={handleSaveSubmit} 
-               />
+            onSaveSubmit={handleSaveSubmit} 
+          />
         ) : (
           <>
             <Text fontSize="xl">
@@ -84,10 +86,14 @@ export const UserProfile: FC = () => {
             Profil szerkesztése
           </Button>
         )}
+        <Button onClick={() => setIsChangingPassword(true)} marginTop="4" marginLeft="4"> {/* Jelszó módosítás gomb */}
+          Jelszó módosítása
+        </Button>
         <Button onClick={logout} marginTop="4" marginLeft="4">
           Kijelentkezés
         </Button>
       </Flex>
+      {isChangingPassword && <ChangePassword />} 
     </>
   );
 };

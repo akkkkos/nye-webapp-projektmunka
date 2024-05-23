@@ -14,12 +14,12 @@ interface UserEditorFormProps {
 }
 
 const validationSchema = yup.object().shape({
-    firstName: yup.string().required('Keresztnév kötelező'),
-    lastName: yup.string().required('Vezetéknév kötelező'),
+    firstName: yup.string().matches(/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+$/, 'Keresztnév csak betűket tartalmazhat').required('Keresztnév kötelező'),
+    lastName: yup.string().matches(/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+$/, 'Vezetéknév csak betűket tartalmazhat').required('Vezetéknév kötelező'),
 });
 
 export const UserEditorForm: FC<UserEditorFormProps> = ({ firstName, lastName, onSubmit, onSaveSubmit }) => {
-    const { authToken } = useAuthContext();
+    const { authToken, user, setUser } = useAuthContext();
     const { putUserData } = useWebshopApi();
 
     const [updatedFirstName, setUpdatedFirstName] = useState(firstName);
@@ -38,8 +38,15 @@ export const UserEditorForm: FC<UserEditorFormProps> = ({ firstName, lastName, o
                 await putUserData(authToken, formValues.firstName, formValues.lastName);
                 setUpdatedFirstName(formValues.firstName);
                 setUpdatedLastName(formValues.lastName);
-                onSubmit(formValues.firstName, formValues.lastName); // Call onSubmit with updated data
+                onSubmit(formValues.firstName, formValues.lastName); 
 
+
+                let tempUser: User | null =user? {...user}:null;
+                if(tempUser){
+                    tempUser.firstName=formValues.firstName;
+                    tempUser.lastName=formValues.lastName;
+                    setUser({...tempUser});
+                }
                 setStatus('UPDATED');
                 console.log('Form submission successful');
             } catch (error) {
@@ -58,17 +65,12 @@ export const UserEditorForm: FC<UserEditorFormProps> = ({ firstName, lastName, o
         }
     }, [formik.isSubmitting]);
 
-    // useEffect to automatically refresh the page when updatedFirstName or updatedLastName changes
-    useEffect(() => {
-        if (updatedFirstName !== firstName || updatedLastName !== lastName) {
-            window.location.reload(); // Reload the page
-        }
-    }, [updatedFirstName, updatedLastName, firstName, lastName]);
 
+   
     return (
         <VStack as="form" spacing="4" onSubmit={(event: FormEvent<HTMLDivElement>) => formik.handleSubmit(event as unknown as FormEvent<HTMLFormElement>)}>
             <FormControl isInvalid={!!formik.errors.firstName} isRequired>
-                <FormLabel htmlFor="firstName">Keresztnév</FormLabel>
+                <FormLabel htmlFor="firstName">Vezetéknév</FormLabel>
                 <Input
                     type="text"
                     id="firstName"
@@ -80,7 +82,7 @@ export const UserEditorForm: FC<UserEditorFormProps> = ({ firstName, lastName, o
             </FormControl>
 
             <FormControl isInvalid={!!formik.errors.lastName} isRequired>
-                <FormLabel htmlFor="lastName">Vezetéknév</FormLabel>
+                <FormLabel htmlFor="lastName">Keresztnév</FormLabel>
                 <Input
                     type="text"
                     id="lastName"
