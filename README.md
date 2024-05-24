@@ -6,7 +6,7 @@ It is for the [epam-nye-webapp-2024 exam](https://github.com/epam-nye-cooperatio
 | #    | Feladat                                                                                                                                             | Pontszám |     Megoldó      | Státusz |
 | :--- | --------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | :--------------: | :-----: |
 | 1.   | [WSA-01 - Belépés](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-01.md)                   |    1     |   Balogh Ákos    |    ✔️    |
-| 2.   | [WSA-02 - Regisztráció](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-02.md)              |    3     | Kovács Sebestyén |    🔄    |
+| 2.   | [WSA-02 - Regisztráció](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-02.md)              |    3     | Kovács Sebestyén |    ✔️    |
 | 3.   | [WSA-03 - Profil és kilépés](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-03.md)         |    1     |  Fogarasi Alex   |    ✔️    |
 | 4.   | [WSA-04 - Adatok módosítása](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-04.md)         |    2     |  Fogarasi Alex   |    🔄    |
 | 5.   | [WSA-05 - Jelszó módosítása](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-05.md)         |    1     |  Fogarasi Alex   |    🔄    |

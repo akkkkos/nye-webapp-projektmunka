@@ -22,6 +22,19 @@ export const useWebshopApi = () => {
     return result.accessToken;
   }, []);
 
+  const registerUser = useCallback(async (username: string, password: string, passwordConfirm: string, lastName: string, firstName: string, shippingAddress: object, billingAddress: object) => {
+    const response = await fetch(`${BASE_URL}/user`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, passwordConfirm, lastName, firstName, shippingAddress, billingAddress}),
+    });
+    if (!response.ok) {
+      throw new Error(response.status === 400 ? 'Hibás adatok' : 'Felhasználó már létezik!');
+    }
+    const result = await response.json();
+    return result;
+  }, []);
+
   const getUserProfile = useCallback(
     async (authToken: string): Promise<User> => {
       const response = await fetch(`${BASE_URL}/user`, {
@@ -115,6 +128,7 @@ export const useWebshopApi = () => {
 
   return {
     login,
+    registerUser,
     getUserProfile,
     getCategories,
     getProducts: getProductsByParams,

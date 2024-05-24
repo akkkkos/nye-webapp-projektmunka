@@ -5,10 +5,10 @@ import { CartProvider } from './cart/cartProvider';
 import { NavBar } from './components/NavBar';
 import { KezdoLap } from './components/KezdoLap';
 import { Login } from './components/Belepes';
+import { Register } from './components/Regisztracio';
 import { TermekLista } from './components/TermekLista';
 import { ProductPage } from './components/products/Product-page';
 import {CartPage} from './cart/Kosaroldal';
-
 
 function App() {
   if (!localStorage.getItem("chakra-ui-color-mode-default")) {
@@ -26,6 +26,7 @@ function App() {
           <Routes>
             <Route path="/" element={<KezdoLap></KezdoLap>} />
             <Route path="/login" element={<Login></Login>} />
+            <Route path="/register" element={<Register></Register>} />
             <Route path="/category/:categoryId" element={<TermekLista isSearch={false}/>} />
             <Route path="/product/:productId" element={<ProductPage />} />
             <Route path="/cart" element={<CartPage/>} />
