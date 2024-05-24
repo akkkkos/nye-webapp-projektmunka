@@ -24,7 +24,8 @@ export const INITIAL_SEARCH_STATE: ProductsState = {
     categories: ["cameras-photos"],
     orderBy: ProductSortType.RATING_DESC, // Alapértelmezett rendezés értékelés szerinti csökkenő sorrend
     offset: 0,
-    limit: 6
+    limit: 6,
+   
 };
 
 export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => {
@@ -37,12 +38,18 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
     const [pageCount, setPageCount] = useState(1);
 
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [minPrice, setMinPrice] = useState<number | undefined>();
+ const [maxPrice, setMaxPrice] = useState<number | undefined>();
+  const [inStock, setInStock] = useState<boolean | undefined>();
+  const [minRate, setMinRate] = useState<number | undefined>();
+  const [maxRate, setMaxRate] = useState<number | undefined>();
+
     const { getProducts } = useWebshopApi();
 
     useEffect(() => {
-        loadProducts()
+        loadProducts();
     }, []);
-
 
     
 
@@ -68,12 +75,24 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
                 limit: INITIAL_SEARCH_STATE .limit,
                 offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE .offset,
                 orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE .orderBy,
-                categories: [categoryId]
+                categories: [categoryId],
+                query: searchQuery || undefined,
+                minPrice: minPrice,
+                maxPrice: maxPrice,
+                inStock: inStock,
+                minRate: minRate,
+                maxRate: maxRate
             } :
             {
                 limit: INITIAL_SEARCH_STATE .limit,
                 offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE .offset,
-                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE .orderBy
+                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE .orderBy,
+                query: searchQuery || undefined,
+                minPrice: minPrice,
+                maxPrice: maxPrice,
+                inStock: inStock,
+                minRate: minRate,
+                maxRate: maxRate
             }
         const _productsData = await getProducts(defaultQuery);
         productsDispatch({ type: 'setResults', payload: _productsData });
@@ -81,6 +100,9 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
 
     const handleKeresesClick = () => {
             setShowDetailedSearch(!showDetailedSearch);
+            if (showDetailedSearch) {
+                loadProducts();
+            }
         };
 
     const handleKovetkezoOldal = (e: MouseEvent<HTMLButtonElement>) => {
@@ -164,7 +186,47 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
         reloadProducts(productsState.offset, newOrderBy);
 
     }
+    const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = event.target;
+        if (type === 'checkbox') {
+            setInStock(checked);
+        } else if (type === 'number') {
+            const numericValue = value ? Number(value) : undefined;
+            switch (name) {
+                case 'minPrice':
+                    setMinPrice(numericValue);
+                    break;
+                case 'maxPrice':
+                    setMaxPrice(numericValue);
+                    break;
+                case 'minRate':
+                    setMinRate(numericValue);
+                    break;
+                case 'maxRate':
+                    setMaxRate(numericValue);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            setSearchQuery(value);
+        }
+    };
 
+    const handleFilterSubmit = () => {
+        // Amikor a felhasználó a szűrés gombra kattint, frissítse a keresési paramétereket, és töltse be újra a termékeket
+        setSearchParams({
+            query: searchQuery || "",
+            minPrice: minPrice?.toString() || "",
+            maxPrice: maxPrice?.toString() || "",
+            inStock: inStock ? "true" : "false",
+            minRate: minRate?.toString() || "",
+            maxRate: maxRate?.toString() || "",
+        });
+        loadProducts();
+    };
+    
+    
 
     return (
         <>
@@ -176,17 +238,17 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
                     {showDetailedSearch && (
                         <Box border="1px" borderColor="gray.200" p={4} borderRadius="md" boxShadow="sm">
                             <Stack spacing={4}>
-                                <Input name="query" placeholder="Keresés" onChange={handleKeresesClick} />
+                                <Input name="query" placeholder="Keresés" onChange={handleSearchInputChange} />
                                 <Flex>
-                                    <Input name="minPrice" placeholder="Minimum ár" type="number" onChange={handleKeresesClick} mr={2} />
-                                    <Input name="maxPrice" placeholder="Maximum ár" type="number" onChange={handleKeresesClick} />
+                                    <Input name="minPrice" placeholder="Minimum ár" type="number" onChange={handleSearchInputChange} mr={2} />
+                                    <Input name="maxPrice" placeholder="Maximum ár" type="number" onChange={handleSearchInputChange} />
                                 </Flex>
-                                <Checkbox name="inStock" onChange={handleKeresesClick}>Készleten</Checkbox>
+                                <Checkbox name="inStock" onChange={handleSearchInputChange}>Készleten</Checkbox>
                                 <Flex>
-                                    <Input name="minRate" placeholder="Minimum értékelés" type="number" onChange={handleKeresesClick} mr={2} />
-                                    <Input name="maxRate" placeholder="Maximum értékelés" type="number" onChange={handleKeresesClick} />
+                                    <Input name="minRate" placeholder="Minimum értékelés" type="number" onChange={handleSearchInputChange} mr={2} />
+                                    <Input name="maxRate" placeholder="Maximum értékelés" type="number" onChange={handleSearchInputChange} />
                                 </Flex>
-                                <Button onClick={handleKeresesClick} colorScheme="blue">Szűrés</Button>
+                                <Button onClick={handleFilterSubmit} colorScheme="blue">Szűrés</Button>
                             </Stack>
                         </Box>
                     )}
