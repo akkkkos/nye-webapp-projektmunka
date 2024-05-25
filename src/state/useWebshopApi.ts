@@ -49,8 +49,15 @@ export const useWebshopApi = () => {
 
 
   const getProductsByParams = useCallback(async (query: ProductSearchParams): Promise<ReducedProducts> => {
-
     const searchParams = new URLSearchParams(query as Record<string, string>);
+
+    console.log(query)
+    if (query.minPrice) searchParams.append('minPrice', query.minPrice.toString());
+    if (query.maxPrice ) searchParams.append('maxPrice', query.maxPrice.toString());
+    if (query.inStock ) searchParams.append('inStock', query.inStock.toString());
+    if (query.minRate ) searchParams.append('minRate', query.minRate.toString());
+    if (query.maxRate ) searchParams.append('maxRate', query.maxRate.toString());
+    if (query.categories) searchParams.append('categories', query.categories.join(','));
 
     const response = await fetch(`${BASE_URL}/products?${searchParams}`, {
       method: 'GET',

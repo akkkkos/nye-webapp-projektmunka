@@ -30,6 +30,7 @@ export const NavBar: FC = () => {
     const handleSearch = () => {
         if (searchInput.trim() !== '') {
             navigate("/search", { state: { isSearch: true, query: searchInput } });
+          
         }
     }
 

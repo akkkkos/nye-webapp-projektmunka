@@ -30,11 +30,11 @@ export interface ProductsStateActions {
 
 export interface ProductSearchParams {
     query?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    inStock?: boolean;
-    minRate?: number;
-    maxRate?: number;
+    minPrice?: number | null;
+    maxPrice?: number| null;
+    inStock?: boolean| null;
+    minRate?: number| null;
+    maxRate?: number| null;
     categories?: string[] | null;
     orderBy?: ProductSortType;
     offset?: number;

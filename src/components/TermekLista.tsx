@@ -24,7 +24,8 @@ export const INITIAL_SEARCH_STATE: ProductsState = {
     categories: ["cameras-photos"],
     orderBy: ProductSortType.RATING_DESC, // Alapértelmezett rendezés értékelés szerinti csökkenő sorrend
     offset: 0,
-    limit: 6
+    limit: 6,
+   
 };
 
 export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => {
@@ -35,30 +36,26 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
         isSearch ? INITIAL_SEARCH_STATE : INITIAL_STATE // Keresési oldalon használja a keresési alapértelmezett állapotot, egyébként a nem keresési alapértelmezett állapotot
     );    
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [minPrice, setMinPrice] = useState<number | undefined>();
-    const [maxPrice, setMaxPrice] = useState<number | undefined>();
-    const [inStock, setInStock] = useState(false);
-    const [minRate, setMinRate] = useState<number | undefined>();
-    const [maxRate, setMaxRate] = useState<number | undefined>();
     const [pageCount, setPageCount] = useState(1);
 
-    
+    const [searchQuery, setSearchQuery] = useState<string>('sit');
+    const [minPrice, setMinPrice] = useState<number | null>(null);
+    const [maxPrice, setMaxPrice] = useState<number | null>(null);
+    const [inStock, setInStock] = useState<boolean | null>(null);
+    const [minRate, setMinRate] = useState<number | null>(null);
+    const [maxRate, setMaxRate] = useState<number |null>(null);
 
     const { getProducts } = useWebshopApi();
 
     useEffect(() => {
-        loadProducts()
+        loadProducts();
     }, []);
-
 
     
 
     useEffect(() => {
         setSearchParams({ "orderBy": productsState.orderBy, "page": pageCount.toString() });
     }, [productsState.orderBy, pageCount]);
-
-
 
     const loadProducts = async () => {
         const pageCountParam = searchParams.get('page')
@@ -73,38 +70,35 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
             productsDispatch({ type: 'changeOrder', payload: orderByParam as ProductSortType })
         }
 
-        var defaultQuery: ProductSearchParams = categoryId ?
+        const queryParam = searchParams.get('query')
+        if(queryParam) setSearchQuery(queryParam)
+
+        var defaultQuery: ProductSearchParams =  
             {
                 limit: INITIAL_SEARCH_STATE .limit,
                 offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE .offset,
                 orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE .orderBy,
-                categories: [categoryId]
-            } :
-            {
-                limit: INITIAL_SEARCH_STATE .limit,
-                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_SEARCH_STATE .offset,
-                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_SEARCH_STATE .orderBy
                 
-            }
+                ...(categoryId != null && {categories : [categoryId]}),
+                ...(queryParam != null && {query : queryParam}),
+                ...(minPrice != null && {minPrice : minPrice}),
+                ...(maxPrice != null && {maxPrice : maxPrice}),
+                ...(inStock != null && {inStock : inStock}),
+                ...(minRate != null && {minRate : minRate}),
+                ...(maxRate != null && {maxRate : maxRate})
+
+            } ;
+            
         const _productsData = await getProducts(defaultQuery);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
-    const handleFilterSubmit = () => {
-        setSearchParams({
-            query: searchQuery || "",
-            minPrice: minPrice?.toString() || "",
-            maxPrice: maxPrice?.toString() || "",
-            inStock: inStock ? "true" : "false",
-            minRate: minRate?.toString() || "",
-            maxRate: maxRate?.toString() || "",
-        });
-        loadProducts();
-    };
-
     const handleKeresesClick = () => {
-        setShowDetailedSearch(!showDetailedSearch);
-    };
+            setShowDetailedSearch(!showDetailedSearch);
+            if (showDetailedSearch) {
+                loadProducts();
+            }
+        };
 
     const handleKovetkezoOldal = (e: MouseEvent<HTMLButtonElement>) => {
         const newOldal = pageCount + 1
@@ -187,33 +181,73 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
         reloadProducts(productsState.offset, newOrderBy);
 
     }
+    const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = event.target;
+        if (type === 'checkbox') {
+            setInStock(checked);
+        } else if (type === 'number') {
+            const numericValue = value ? Number(value) : null;
+            switch (name) {
+                case 'minPrice':
+                    setMinPrice(numericValue);
+                    break;
+                case 'maxPrice':
+                    setMaxPrice(numericValue);
+                    break;
+                case 'minRate':
+                    setMinRate(numericValue);
+                    break;
+                case 'maxRate':
+                    setMaxRate(numericValue);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            setSearchQuery(value);
+        }
+    };
 
+    const handleFilterSubmit = () => {
+        // Amikor a felhasználó a szűrés gombra kattint, frissítse a keresési paramétereket, és töltse be újra a termékeket
+        setSearchParams({
+            query: searchQuery || "",
+            minPrice: minPrice?.toString() || "",
+            maxPrice: maxPrice?.toString() || "",
+            inStock: inStock ? "true" : "false",
+            minRate: minRate?.toString() || "",
+            maxRate: maxRate?.toString() || "",
+        });
+        loadProducts();
+    };
+    
+    
 
     return (
         <>
             {isSearch && (
                 <Box mb={6}>
-                <Button onClick={handleKeresesClick} colorScheme="teal" size="lg" mb={4}>
-                    Termékek Részletes Szűrése!
-                </Button>
-                {showDetailedSearch && (
-                    <Box border="1px" borderColor="gray.200" p={4} borderRadius="md" boxShadow="sm">
-                        <Stack spacing={4}>
-                            <Input name="query" placeholder="Keresés" onChange={(e) => setSearchQuery(e.target.value)} />
-                            <Flex>
-                                <Input name="minPrice" placeholder="Minimum ár" type="number" onChange={(e) => setMinPrice(Number(e.target.value))} mr={2} />
-                                <Input name="maxPrice" placeholder="Maximum ár" type="number" onChange={(e) => setMaxPrice(Number(e.target.value))} />
-                            </Flex>
-                            <Checkbox name="inStock" onChange={(e) => setInStock(e.target.checked)}>Készleten</Checkbox>
-                            <Flex>
-                                <Input name="minRate" placeholder="Minimum értékelés" type="number" onChange={(e) => setMinRate(Number(e.target.value))} mr={2} />
-                                <Input name="maxRate" placeholder="Maximum értékelés" type="number" onChange={(e) => setMaxRate(Number(e.target.value))} />
-                            </Flex>
-                            <Button onClick={handleFilterSubmit} colorScheme="blue">Szűrés</Button>
-                        </Stack>
-                    </Box>
-                )}
-            </Box>
+                    <Button onClick={handleKeresesClick} colorScheme="teal" size="lg" mb={4}>
+                        Termékek Részletes Szűrése!
+                    </Button>
+                    {showDetailedSearch && (
+                        <Box border="1px" borderColor="gray.200" p={4} borderRadius="md" boxShadow="sm">
+                            <Stack spacing={4}>
+                                <Input name="query" placeholder="Keresés" onChange={handleSearchInputChange} />
+                                <Flex>
+                                    <Input name="minPrice" placeholder="Minimum ár" type="number" onChange={handleSearchInputChange} mr={2} />
+                                    <Input name="maxPrice" placeholder="Maximum ár" type="number" onChange={handleSearchInputChange} />
+                                </Flex>
+                                <Checkbox name="inStock" onChange={handleSearchInputChange}>Készleten</Checkbox>
+                                <Flex>
+                                    <Input name="minRate" placeholder="Minimum értékelés" type="number" onChange={handleSearchInputChange} mr={2} />
+                                    <Input name="maxRate" placeholder="Maximum értékelés" type="number" onChange={handleSearchInputChange} />
+                                </Flex>
+                                <Button onClick={handleFilterSubmit} colorScheme="blue">Szűrés</Button>
+                            </Stack>
+                        </Box>
+                    )}
+                </Box>
             )}
 
             {/* Közös rész a keresési és nem keresési oldalon */}
