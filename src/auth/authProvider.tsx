@@ -10,7 +10,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const [authToken, setAuthToken, removeAuthToken] = useLocalStorage(AUTH_KEY, '');
     const [user, setUser] = useState<User | null>(null);
-    const { login: createLoginToken, getUserProfile } = useWebshopApi();
+    const { login: createLoginToken, getUserProfile, registerUser } = useWebshopApi();
 
     const navigate = useNavigate();
 
@@ -35,14 +35,25 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         [navigate, removeAuthToken]
     );
 
+    const register: AuthContext['register'] = useCallback(
+        async (username: string, password: string, passwordConfirm: string, lastname: string, firstname: string, shippingAddress: object, billingAddress: object) => {
+            try {
+                const registeredUser = await registerUser(username, password, passwordConfirm, lastname, firstname, shippingAddress, billingAddress)
+            } catch (error) {
+                return (error as Error)?.message;
+            }
+        },
+        [registerUser]
+    );
 
     const state: AuthContext = useMemo(() => ({
         login,
         logout,
+        register,
         authToken,
         user,
         setUser
-    }), [login, logout, user, authToken]);
+    }), [login, logout, register, user, authToken]);
 
 
     useEffect(

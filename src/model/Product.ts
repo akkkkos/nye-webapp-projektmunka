@@ -6,6 +6,7 @@ export interface Product {
     rating: number;
     categories: string[];
     stock: number;
+    description: string;
 }
 
 export interface ReducedProducts {
