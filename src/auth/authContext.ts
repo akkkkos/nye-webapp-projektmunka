@@ -2,13 +2,14 @@ import { createContext, useContext } from 'react';
 
 export interface User {
   userId: string;
-  userName: string;
+  email: string;
   firstName: string;
   lastName: string;
 }
 
 export interface AuthContext {
   user: User | null;
+  setUser: (user: User | null) => void;
   authToken?: string;
   login: (username: string, password: string) => Promise<string | void>;
   register: (username: string, password: string, passwordConfirm: string, lastname: string, firstname: string, shippingAddress: object, billingAddress: object) => Promise<string | void>;

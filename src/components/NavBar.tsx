@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Flex, Button, Card, Text, Box } from '@chakra-ui/react';
+import { Flex, Button, Card, Text, Box, SkipNavContent } from '@chakra-ui/react';
 import { FaShoppingCart } from "react-icons/fa";
 import { Link as NavLink } from 'react-router-dom';
 import { useAuthContext } from '../auth/authContext';
@@ -9,11 +9,11 @@ import { useNavigate } from 'react-router-dom';
 
 
 export const NavBar: FC = () => {
-    const { authToken } = useAuthContext();
+    const { authToken, user } = useAuthContext();
     const { getTotalNofItems } = useCartContext();
     const [totalItems, setTotalItems] = useState<number>(0);
 
-    
+
     useEffect(() => {
         const fetchTotalItems = async () => {
             const total = await getTotalNofItems();
@@ -21,7 +21,7 @@ export const NavBar: FC = () => {
         };
         fetchTotalItems();
     }, [getTotalNofItems]);
-    
+
     const navigate = useNavigate();
     const handleGotoCart = () => {
         navigate("/cart")
@@ -48,11 +48,20 @@ export const NavBar: FC = () => {
                 !authToken &&
                 (
                     <>
-                    <Button as={NavLink} to="/login" margin="2">Belépés</Button>
-                    <Button as={NavLink} to="/register" margin="2">Regisztráció</Button>
+                        <Button as={NavLink} to="/login" margin="2">Belépés</Button>
+                        <Button as={NavLink} to="/register" margin="2">Regisztráció</Button>
                     </>
+
                 )
             }
+
+            {
+                user &&
+                (
+                    <Button as={NavLink} to="/profile" margin="2">Profil</Button>
+                )
+            }
+
         </Flex>
     );
 }
