@@ -16,7 +16,7 @@ export const Login: FC = () => {
         if (authToken) {
             console.log(location);
             console.log("Already logged in, redirecting...");
-            navigate("/"); // TODO valtoztatni profil linkre, ha kész lesz
+            navigate("/profile");
             return;
         }
     }, [location])

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useReducer, useState, MouseEvent } from 'react';
-import { Text, Flex, Button, Grid , GridItem} from '@chakra-ui/react';
+import { Text, Flex, Button, Grid, GridItem } from '@chakra-ui/react';
 import { useParams, useSearchParams } from "react-router-dom";
 import { Product } from '../model';
 import { ProductsState, ProductSortType } from '../state';
@@ -17,7 +17,7 @@ export const INITIAL_STATE: ProductsState = {
     limit: 6
 };
 
-export const EgyKategoria: FC = () => {
+export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => {
     const { categoryId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const [productsState, productsDispatch] = useReducer<ProductsStateReducer>(productsReducer, INITIAL_STATE)
@@ -47,14 +47,19 @@ export const EgyKategoria: FC = () => {
             productsDispatch({ type: 'changeOrder', payload: orderByParam as ProductSortType })
         }
 
-        const defaultQuery: ProductSearchParams = {
-            limit: INITIAL_STATE.limit,
-            offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
-            orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy,
-            categories: categoryId ? [categoryId] : []
-        }
+        var defaultQuery: ProductSearchParams = categoryId ?
+            {
+                limit: INITIAL_STATE.limit,
+                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
+                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy,
+                categories: [categoryId]
+            } :
+            {
+                limit: INITIAL_STATE.limit,
+                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
+                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy
+            }
         const _productsData = await getProducts(defaultQuery);
-        // console.log(_productsData);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
@@ -79,14 +84,19 @@ export const EgyKategoria: FC = () => {
     }
 
     const reloadProducts = async (offset: number, orderBy?: ProductSortType) => {
-        const query: ProductSearchParams = {
-            limit: INITIAL_STATE.limit,
-            offset: offset,
-            orderBy: orderBy ? orderBy : productsState.orderBy,
-            categories: categoryId ? [categoryId] : []
-        }
+        const query: ProductSearchParams = categoryId ?
+            {
+                limit: INITIAL_STATE.limit,
+                offset: offset,
+                orderBy: orderBy ? orderBy : productsState.orderBy,
+                categories: [categoryId]
+            } :
+            {
+                limit: INITIAL_STATE.limit,
+                offset: offset,
+                orderBy: orderBy ? orderBy : productsState.orderBy
+            }
         const _productsData = await getProducts(query);
-        // console.log(_productsData);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
@@ -137,7 +147,7 @@ export const EgyKategoria: FC = () => {
 
     return (
         <>
-            <Text>Összes termék ebben a kategóriában: {productsState.total}db</Text>
+            <Text>Összes termék{categoryId ? " ebben a kategóriában" : ""}: {productsState.total}db</Text>
 
             {
                 productsState.total > 6 &&
