@@ -31,15 +31,10 @@ export const NavBar: FC = () => {
         <Flex justifyContent="space-between" marginBottom="2" marginTop="4" alignItems="center">
             <Flex>
                 <Button as={NavLink} to="/" margin="2">Kezdőlap</Button>
-                {
-                    authToken &&
-                    (
-                        <Box display="flex" alignItems="center" borderRadius="md" padding="2" marginLeft="2" _hover={{ cursor: 'pointer' }} onClick={handleGotoCart}>
-                            <FaShoppingCart />
-                            <Text marginLeft="2">{totalItems}</Text>
-                        </Box>
-                    )
-                }
+                <Box display="flex" alignItems="center" borderRadius="md" padding="2" marginLeft="2" _hover={{ cursor: 'pointer' }} onClick={handleGotoCart}>
+                    <FaShoppingCart />
+                    <Text marginLeft="2">{totalItems}</Text>
+                </Box>
             </Flex>
             <Flex>
 

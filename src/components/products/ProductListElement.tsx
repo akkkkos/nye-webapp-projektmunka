@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 
 export const ProductListElement: FC<Product> = (product) => {
     const { addItem, getAmountOfSpecificItemAlreadyInCart, getCartAsRawData } = useCartContext()
-    const { authToken } = useAuthContext()
     const [maxStock, setMaxStock] = useState(product.stock)
     const [alreadyInCart, setAlreadyInCart] = useState(0)
 
@@ -24,7 +23,7 @@ export const ProductListElement: FC<Product> = (product) => {
         //console.log("setmax as:", product.stock - getAddable)
         setAlreadyInCart(getAddable)
         setMaxStock(product.stock - getAddable)
-    }
+    };
 
     const addToCartValidate = useCallback(() => {
         return object({
@@ -35,7 +34,7 @@ export const ProductListElement: FC<Product> = (product) => {
         });
     }, [maxStock]);
 
-    const { errors, values, isSubmitting, isValid, isValidating, handleChange, handleSubmit } = useFormik({
+    const { errors, values, isSubmitting, isValid, isValidating, handleChange, handleSubmit, setFieldValue } = useFormik({
         initialValues: {
             amount: 1
         },
@@ -60,6 +59,23 @@ export const ProductListElement: FC<Product> = (product) => {
         navigate(`/product/${product.id}`);
     };
 
+    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const fieldValue = e.target.value
+        if (fieldValue == "") {
+            setFieldValue("amount", fieldValue);
+            return;
+        }
+        if (fieldValue.includes(".") || fieldValue.includes("-")) return
+        if (Number.isNaN(fieldValue)) return;
+
+        const fieldValueAsNumber = Number(fieldValue)
+        if (!Number.isInteger(fieldValueAsNumber)) return
+        if (Number.isNaN(fieldValueAsNumber)) return
+        if (1 > fieldValueAsNumber || fieldValueAsNumber > maxStock) return
+
+        setFieldValue("amount", fieldValue)
+    }
+
     return (
         <Card margin="2" minWidth={200} size="md">
             <Image
@@ -78,33 +94,26 @@ export const ProductListElement: FC<Product> = (product) => {
                 }
                 <Flex>{renderStars()}</Flex>
 
-                {
-                    authToken &&
-                    (
-                        <>
-                            <Divider marginTop={3} marginBottom={3} />
-                            {
-                                alreadyInCart > 0 &&
-                                <Text>Már {alreadyInCart} darab a kosaradban</Text>
-                            }
-                            {
-                                (product.stock > 0 && maxStock > 0) &&
-                                <Box marginTop={2} as="form" onSubmit={handleSubmit}>
-                                    <Flex>
-                                        <FormControl isInvalid={!!errors.amount}>
-                                            <Input name="amount" type="number" value={values.amount} onChange={handleChange} />
-                                            <FormErrorMessage>{errors.amount}</FormErrorMessage>
-                                            <Button paddingInline={4} marginTop={2} type="submit" isDisabled={isSubmitting || isValidating || !isValid}
-                                                size="md"
-                                                colorScheme="teal"
-                                            >Kosárba tétel</Button>
-                                        </FormControl>
-                                    </Flex>
-                                </Box>
-                            }
-                        </>
-                    )
-                }
+                <>
+                    <Divider marginTop={3} marginBottom={3} />
+                    {
+                        alreadyInCart > 0 &&
+                        <Text>Már {alreadyInCart} darab a kosaradban</Text>
+                    }
+
+                    <Box marginTop={2} as="form" onSubmit={handleSubmit}>
+                        <Flex>
+                            <FormControl isInvalid={!!errors.amount}>
+                                <Input name="amount" type="text" value={values.amount} onChange={handleAmountChange} defaultValue={1} min={1} max={maxStock} step={1} isDisabled={isSubmitting || 1 > maxStock}/>
+                                <FormErrorMessage>{errors.amount}</FormErrorMessage>
+                                <Button paddingInline={4} marginTop={2} type="submit" isDisabled={isSubmitting || isValidating || !isValid || 1 > maxStock}
+                                    size="md"
+                                    colorScheme="teal"
+                                >Kosárba tétel</Button>
+                            </FormControl>
+                        </Flex>
+                    </Box>
+                </>
             </CardBody>
         </Card>
     );
