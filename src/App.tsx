@@ -7,6 +7,7 @@ import { KezdoLap } from './components/KezdoLap';
 import { Login } from './components/Belepes';
 import { TermekLista } from './components/TermekLista';
 import { ProductPage } from './components/products/Product-page';
+import { SearchPage } from './components/SearchPage';
 
 
 function App() {
@@ -25,10 +26,11 @@ function App() {
           <Routes>
             <Route path="/" element={<KezdoLap></KezdoLap>} />
             <Route path="/login" element={<Login></Login>} />
-            <Route path="/category/:categoryId" element={<TermekLista isSearch={false}/>} />
+            <Route path="/category/:categoryId" element={<TermekLista></TermekLista>} />
+
             <Route path="/product/:productId" element={<ProductPage />} />
             <Route path="/cart" element={<></>} />
-            <Route path="/search" element={<TermekLista isSearch={true}/>} />
+            <Route path="/search" element={<SearchPage></SearchPage> } />
           </Routes>
         </Container>
         </CartProvider>
