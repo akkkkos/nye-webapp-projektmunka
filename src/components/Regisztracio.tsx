@@ -51,17 +51,16 @@ export const Register: FC = () => {
             phoneNumber: string()
             .required('Kötelező kitölteni')
             .matches(/^\+{1}\d{1,}$/,
-            'csak nemzetközi formátum (+-al kezdődő érték), tagoló elemek nélkül (csak számok)'
-        ),
+            'csak nemzetközi formátum (+-al kezdődő érték), tagoló elemek nélkül (csak számok)'),
         }),
         billingAddress: object().shape({
             name: string()
             .required('Kötelező kitölteni'),
             taxNumber: string()
-            .required('Kötelező kitölteni')
+            .optional()
             .matches(
-                /^(?=.{11,})/,
-                '11 számjegyből áll'),
+                /^\d{8}\-{1}\d{1}\-{1}\d{2}$/,
+                '11 számjegyből áll (példa: 12345678-9-12)'),
             country: string()
             .required('Kötelező kitölteni'),
             city: string()
