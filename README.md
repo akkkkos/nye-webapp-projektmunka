@@ -19,7 +19,7 @@ It is for the [epam-nye-webapp-2024 exam](https://github.com/epam-nye-cooperatio
 | 12.  | [WSA-12 - Felhasználó megrendelései](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-12.md) |    1     |                  |         |
 | 13.  | [WSA-13 - Megrendelés részletei](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-13.md)     |    2     |                  |         |
 | 14.  | [WSA-14 - Megrendelés visszamondása](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-14.md) |    2     |                  |         |
-| 15.  | [WSA-15 - Termékek keresése](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-15.md)         |    2     |   Berecz Zsolt   |    🔄    |
+| 15.  | [WSA-15 - Termékek keresése](https://github.com/epam-nye-cooperation/epam-nye-webapp-2024/blob/main/exam-tasks/webshop-api/tasks/WSA-15.md)         |    2     |   Berecz Zsolt   |    ✔️    |
 
 ## Available Scripts
 
