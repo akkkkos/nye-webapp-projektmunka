@@ -11,16 +11,18 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const addItem: CartContext['addItem'] = useCallback(
         async (product: Product, amount: number): Promise<string | void> => {
+            if (Number.isNaN(amount)) return;
+
             const localCartItems = cart? [...cart.items]: []
 
             const productIndex = localCartItems.findIndex(item => item.productId === product.id);
 
             if (productIndex !== -1) {
-                localCartItems[productIndex].amountInCart += amount;
+                localCartItems[productIndex].amountInCart += +amount;
             } else {
                 localCartItems.push({
                     productId: product.id,
-                    amountInCart: amount
+                    amountInCart: +amount
                 });
             }
 
