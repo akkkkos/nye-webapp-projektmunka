@@ -30,7 +30,7 @@ function App() {
             <Route path="/login" element={<Login></Login>} />
             <Route path="/profile" element={<UserProfile ></UserProfile>} />
             <Route path="/register" element={<Register></Register>} />
-            <Route path="/category/:categoryId" element={<TermekLista isSearch={false}/>} />
+            <Route path="/category/:categoryId" element={<TermekLista/>} />
             <Route path="/product/:productId" element={<ProductPage />} />
             <Route path="/cart" element={<CartPage/>} />
             <Route path="/search" element={<SearchPage></SearchPage>} />
