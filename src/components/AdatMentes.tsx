@@ -14,8 +14,8 @@ interface UserEditorFormProps {
 }
 
 const validationSchema = yup.object().shape({
-    firstName: yup.string().matches(/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+$/, 'Keresztnév csak betűket tartalmazhat').required('Keresztnév kötelező'),
-    lastName: yup.string().matches(/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+$/, 'Vezetéknév csak betűket tartalmazhat').required('Vezetéknév kötelező'),
+    firstName: yup.string().required('Keresztnév kötelező'),
+    lastName: yup.string().required('Vezetéknév kötelező'),
 });
 
 export const UserEditorForm: FC<UserEditorFormProps> = ({ firstName, lastName, onSubmit, onSaveSubmit }) => {
