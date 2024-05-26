@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useReducer, useState, MouseEvent } from 'react';
-import { Text, Flex, Button, Grid, GridItem } from '@chakra-ui/react';
+import { Text, Flex, Button, Grid, GridItem,Box, Input, Checkbox, Stack, Heading } from '@chakra-ui/react';
 import { useParams, useSearchParams } from "react-router-dom";
 import { Product } from '../model';
 import { ProductsState, ProductSortType } from '../state';
@@ -7,6 +7,7 @@ import { ProductsStateReducer, productsReducer } from '../state/productsReducer'
 import { useWebshopApi } from '../state/useWebshopApi';
 import { ProductSearchParams } from '../state/productsState';
 import { ProductListElement } from './products/ProductListElement';
+import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
 export const INITIAL_STATE: ProductsState = {
     products: [],
@@ -16,9 +17,8 @@ export const INITIAL_STATE: ProductsState = {
     offset: 0,
     limit: 6
 };
-
-export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => {
-    const { categoryId } = useParams();
+export const TermekLista: FC  = () => {
+     const { categoryId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const [productsState, productsDispatch] = useReducer<ProductsStateReducer>(productsReducer, INITIAL_STATE)
 
@@ -47,19 +47,14 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
             productsDispatch({ type: 'changeOrder', payload: orderByParam as ProductSortType })
         }
 
-        var defaultQuery: ProductSearchParams = categoryId ?
-            {
-                limit: INITIAL_STATE.limit,
-                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
-                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy,
-                categories: [categoryId]
-            } :
-            {
-                limit: INITIAL_STATE.limit,
-                offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
-                orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy
-            }
+        const defaultQuery: ProductSearchParams = {
+            limit: INITIAL_STATE.limit,
+            offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * 6 : INITIAL_STATE.offset,
+            orderBy: orderByParam ? orderByParam as ProductSortType : INITIAL_STATE.orderBy,
+            categories: categoryId ? [categoryId] : []
+        }
         const _productsData = await getProducts(defaultQuery);
+        // console.log(_productsData);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
@@ -84,19 +79,14 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
     }
 
     const reloadProducts = async (offset: number, orderBy?: ProductSortType) => {
-        const query: ProductSearchParams = categoryId ?
-            {
-                limit: INITIAL_STATE.limit,
-                offset: offset,
-                orderBy: orderBy ? orderBy : productsState.orderBy,
-                categories: [categoryId]
-            } :
-            {
-                limit: INITIAL_STATE.limit,
-                offset: offset,
-                orderBy: orderBy ? orderBy : productsState.orderBy
-            }
+        const query: ProductSearchParams = {
+            limit: INITIAL_STATE.limit,
+            offset: offset,
+            orderBy: orderBy ? orderBy : productsState.orderBy,
+            categories: categoryId ? [categoryId] : []
+        }
         const _productsData = await getProducts(query);
+        // console.log(_productsData);
         productsDispatch({ type: 'setResults', payload: _productsData });
     }
 
@@ -147,7 +137,7 @@ export const TermekLista: FC<{ isSearch: boolean }> = ({ isSearch = false }) => 
 
     return (
         <>
-            <Text>Összes termék{categoryId ? " ebben a kategóriában" : ""}: {productsState.total}db</Text>
+            <Text>Összes termék ebben a kategóriában: {productsState.total}db</Text>
 
             {
                 productsState.total > 6 &&
