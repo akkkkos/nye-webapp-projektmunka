@@ -27,7 +27,7 @@ export const SearchPage: FC = () => {
 
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
     const [pageCount, setPageCount] = useState(1);
-
+//
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [minPrice, setMinPrice] = useState<number | null>(null);
     const [maxPrice, setMaxPrice] = useState<number | null>(null);
@@ -56,7 +56,7 @@ export const SearchPage: FC = () => {
 
         const queryParam = searchParams.get('query');
         if (queryParam) setSearchQuery(queryParam);
-
+//
         const defaultQuery: ProductSearchParams = {
             limit: INITIAL_SEARCH_STATE.limit,
             offset: pageCountParam ? (Number.parseInt(pageCountParam) - 1) * INITIAL_SEARCH_STATE.limit : INITIAL_SEARCH_STATE.offset,
@@ -70,14 +70,23 @@ export const SearchPage: FC = () => {
             ...(maxRate != null && { maxRate: maxRate })
         };
 
-        const _productsData = await getProducts(defaultQuery);
-        productsDispatch({ type: 'setResults', payload: _productsData });
+       
+  if (searchQuery || minPrice || maxPrice || inStock || minRate || maxRate) {
+    // Only fetch products that match the filter criteria
+    const filteredProducts = await getProducts(defaultQuery);
+    productsDispatch({ type: 'setResults', payload: filteredProducts });
+  } else {
+    // Fetch all products if no filter criteria is specified
+    const allProducts = await getProducts({ limit: INITIAL_SEARCH_STATE.limit, offset: 0 });
+    productsDispatch({ type: 'setResults', payload: allProducts });
+  }
     };
 
+//
     const handleKeresesClick = () => {
         setShowDetailedSearch(!showDetailedSearch);
         if (showDetailedSearch) {
-            loadProducts();
+         loadProducts();
         }
     };
 
@@ -95,17 +104,7 @@ export const SearchPage: FC = () => {
         setSearchParams({ ...Object.fromEntries(searchParams), page: newOldal.toString() });
     };
 
-    const reloadProducts = async (offset: number, orderBy?: ProductSortType) => {
-        const query: ProductSearchParams = {
-            limit: INITIAL_SEARCH_STATE.limit,
-            offset: offset,
-            orderBy: orderBy ? orderBy : productsState.orderBy,
-            ...(categoryId != null && { categories: [categoryId] }),
-        };
-        const _productsData = await getProducts(query);
-        productsDispatch({ type: 'setResults', payload: _productsData });
-    };
-
+//
     const handleSortChange = (e: MouseEvent<HTMLButtonElement>) => {
         const nameOfButton = e.currentTarget.name;
         if (!nameOfButton) return;
@@ -127,7 +126,7 @@ export const SearchPage: FC = () => {
         productsDispatch({ type: 'changeOrder', payload: newOrderBy });
         setSearchParams({ ...Object.fromEntries(searchParams), orderBy: newOrderBy });
     };
-
+//
     const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = event.target;
         if (type === 'checkbox') {
