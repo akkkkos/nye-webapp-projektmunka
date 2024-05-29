@@ -6,7 +6,7 @@ import { useParams, Link } from 'react-router-dom';
 
 import { Box, Text, Button } from '@chakra-ui/react';
 
-// const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://localhost:5000';
 
 
 export const ProductPage: FC = () => {
