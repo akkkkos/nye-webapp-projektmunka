@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { Button, ButtonGroup } from '@chakra-ui/react';
+import { Box, Button, ButtonGroup, Card, CardBody, FormControl, FormErrorMessage, FormLabel, Heading, Input,Text } from '@chakra-ui/react';
 import { useAuthContext } from '../auth/authContext';
 import { useWebshopApi } from '../state/useWebshopApi';
 
@@ -67,60 +67,60 @@ const ChangePassword: React.FC = () => {
     });
 
     return (
-        <div style={{ maxWidth: '400px', margin: 'auto', padding: '20px', border: '1px solid #ccc', borderRadius: '5px' }}>
-            <h2 style={{ textAlign: 'center' }}>Jelszó Módosítása</h2>
-            <form onSubmit={formik.handleSubmit}>
-                <div style={{ marginBottom: '15px' }}>
-                    <input
-                        type="password"
-                        name="oldPassword"
-                        placeholder="Régi Jelszó"
-                        value={formik.values.oldPassword}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc', color: 'black', backgroundColor: '#e0e0e0' }}
-                    />
-                    {formik.touched.oldPassword && formik.errors.oldPassword && (
-                        <div style={{ color: 'red' }}>{formik.errors.oldPassword}</div>
-                    )}
-                </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Új Jelszó"
-                        value={formik.values.password}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc', color: 'black', backgroundColor: '#e0e0e0' }}
-                    />
-                    {formik.touched.password && formik.errors.password && (
-                        <div style={{ color: 'red' }}>{formik.errors.password}</div>
-                    )}
-                </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <input
-                        type="password"
-                        name="passwordConfirm"
-                        placeholder="Új Jelszó Megerősítése"
-                        value={formik.values.passwordConfirm}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc', color: 'black', backgroundColor: '#e0e0e0' }}
-                    />
-                    {formik.touched.passwordConfirm && formik.errors.passwordConfirm && (
-                        <div style={{ color: 'red' }}>{formik.errors.passwordConfirm}</div>
-                    )}
-                </div>
-                {error && <p style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>{error}</p>}
-                {success && <p style={{ color: 'green', textAlign: 'center', marginTop: '10px' }}>{success}</p>}
-                <ButtonGroup>
-                    <Button type="submit" colorScheme="green" width="100%" isDisabled={!formik.isValid || formik.isSubmitting}>
-                        Mentés
-                    </Button>
-                </ButtonGroup>
-            </form>
-        </div>
+        <Box padding="25px" justifyContent="center" as="form" onSubmit={formik.handleSubmit}>
+
+            <Card maxWidth="2xl" mx="auto">
+                <CardBody>
+                    <Heading as="h2" marginBottom="4" textAlign="center">Jelszó Módosítása</Heading>
+                    <FormControl isInvalid={!!(formik.touched.oldPassword && formik.errors.oldPassword)} mb="15px">
+                        <FormLabel>Régi Jelszó</FormLabel>
+                        <Input
+                            type="password"
+                            name="oldPassword"
+                            placeholder="Régi Jelszó"
+                            value={formik.values.oldPassword}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            bg="transparent"
+                        />
+                        <FormErrorMessage>{formik.errors.oldPassword}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl isInvalid={!!(formik.touched.password && formik.errors.password)} mb="15px">
+                        <FormLabel>Új Jelszó</FormLabel>
+                        <Input
+                            type="password"
+                            name="password"
+                            placeholder="Új Jelszó"
+                            value={formik.values.password}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            bg="transparent"
+                        />
+                        <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl isInvalid={!!(formik.touched.passwordConfirm && formik.errors.passwordConfirm)} mb="15px">
+                        <FormLabel>Új Jelszó Megerősítése</FormLabel>
+                        <Input
+                            type="password"
+                            name="passwordConfirm"
+                            placeholder="Új Jelszó Megerősítése"
+                            value={formik.values.passwordConfirm}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            bg="transparent"
+                        />
+                        <FormErrorMessage>{formik.errors.passwordConfirm}</FormErrorMessage>
+                    </FormControl>
+                    {error && <Text color="red.500" textAlign="center" mt="10px">{error}</Text>}
+                        {success && <Text color="green.500" textAlign="center" mt="10px">{success}</Text>}
+                    <ButtonGroup>
+                        <Button type="submit" colorScheme="green" width="100%" isDisabled={!formik.isValid || formik.isSubmitting}>
+                            Mentés
+                        </Button>
+                    </ButtonGroup>
+                </CardBody>
+            </Card>
+        </Box>
     );
 };
 
